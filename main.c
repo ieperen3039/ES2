@@ -3,6 +3,7 @@
 #include <string.h>
 #include "image_util.h"
 #include "network.h"
+#include "mobilenetv2.h"
 
 void preprocess(IMG* img){
     //Subtract mean RGB values, scale with 0.017, and swap RGB->BGR
@@ -31,7 +32,7 @@ int main(int argc, char* argv[]){
 
     //perform inference
     printf("Performing inference\n");
-    BLOB* out = network(img);
+    BLOB* out = network(&mobilenetv2, img);
     for(int i=0;i<5;i++)
         printf("result %f\n",out->data[0][0][i]);
 
