@@ -48,12 +48,35 @@ BLOB* network(Network* net, IMG* img){
 
             break;
 
+            case POOLING:
+                printf("Performing pooling of layer %s\n", layer.name);
+                layer_blobs[l+1] = pooling(
+                    layer_blobs[layer.input],
+                    &(layer.param.pool)
+                );
+            break;
+
             case NONE:
                 //last layer in the list
                 done=true;
             break;
         }
     }
+    //done evaluating the network
 
-    return layer_blobs[num_layers];
+    //clean up all intermediate blobs
+    for(int i=1;i<num_layers-2;i++)
+        free_blob(layer_blobs[i]);
+
+    //free the input blob pointer
+    free(input);
+
+    //extract output blob pointer
+    BLOB* out = layer_blobs[num_layers];
+
+    //clean up layer blob structure (note: only structure, data is managed by caller)
+    free(layer_blobs);
+
+    //return the output blob
+    return out;
 }

@@ -40,6 +40,9 @@ typedef struct {
     //relu
     bool relu;
 
+    //fully connected
+    bool fc;
+
 } conv_param_t;
 
 //perform convolution

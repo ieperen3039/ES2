@@ -17,15 +17,15 @@ BLOB* eltwise(BLOB** in_arr, eltwise_param_t* p){
                 for(int i=1;in_arr[i]!=NULL;i++)
                     switch(p->type){
 
-                        case SUM:
+                        case EW_SUM:
                             out->data[o][m][n]+=in_arr[i]->data[o][m][n];
                         break;
 
-                        case PROD:
+                        case EW_PROD:
                             out->data[o][m][n]*=in_arr[i]->data[o][m][n];
                         break;
 
-                        case MAX:
+                        case EW_MAX:
                             out->data[o][m][n]=fmax(out->data[o][m][n], in_arr[i]->data[o][m][n]);
                         break;
                     }

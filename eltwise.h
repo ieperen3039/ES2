@@ -3,9 +3,9 @@
 #include "blob.h"
 
 typedef enum{
-    MAX,
-    SUM,
-    PROD
+    EW_MAX,
+    EW_SUM,
+    EW_PROD
 }eltwise_operation_t;
 
 typedef struct{

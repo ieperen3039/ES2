@@ -4,15 +4,18 @@
 #include "image_util.h"
 #include "convolution.h"
 #include "eltwise.h"
+#include "pooling.h"
 
 typedef union{
     conv_param_t conv;
     eltwise_param_t eltwise;
+    pool_param_t pool;
 } layer_param_t;
 
 typedef enum{
     CONVOLUTION,
     ELTWISE,
+    POOLING,
     NONE        //not a real layer, used to indicated last layer in list
 }layer_type;
 

@@ -29,14 +29,18 @@ BLOB* load_weights(BLOB* b, conv_param_t* p){
         exit(-1);
     }
 
+    //for fully connected layers the kernel size is equal to the input size
+    int Ky=(p->fc)?b->h:p->Ky;
+    int Kx=(p->fc)?b->w:p->Kx;
+
     //allocate 3D blob, and emulate 4D in KxKy later
-    BLOB* w=alloc_blob(p->num_out, b->d, p->Ky*p->Kx);
+    BLOB* w=alloc_blob(p->num_out, b->d, Ky*Kx);
 
 
     //fill 4D weight structure
     for(int o=0;o<p->num_out/p->group;o++)
         for(int i=0;i<b->d/p->group;i++)
-            fread(w->data[o][i],sizeof(float),p->Ky*p->Kx, fp);
+            fread(w->data[o][i],sizeof(float),Ky*Kx, fp);
 
     //close file
     fclose(fp);
@@ -96,15 +100,19 @@ BLOB* convolution(BLOB* input, conv_param_t* p){
     //load weights
     BLOB* w = load_weights(in, p);
 
+    //if fully connected, the kernel size is set to the image size
+    int Ky=(p->fc)?in->h:p->Ky;
+    int Kx=(p->fc)?in->w:p->Kx;
+
     //perform convolution
     for(int g=0;g<p->group;g++)
         for(int o=g*(out->d/p->group);o<(g+1)*(out->d/p->group);o++)
             for(int i=g*(in->d/p->group);i<(g+1)*(in->d/p->group);i++)
                 for(int m=0;m<out->h;m++)
                     for(int n=0;n<out->w;n++)
-                        for(int k=0;k<p->Ky;k++)
-                            for(int l=0;l<p->Kx;l++)
-                                out->data[o][m][n]+=in->data[i][m*p->Sy+k][n*p->Sx+l]*w->data[o][i][k*p->Kx+l];
+                        for(int k=0;k<Ky;k++)
+                            for(int l=0;l<Kx;l++)
+                                out->data[o][m][n]+=in->data[i][m*p->Sy+k][n*p->Sx+l]*w->data[o][i][k*Kx+l];
 
     //free weights
     free_blob(w);

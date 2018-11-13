@@ -16,6 +16,18 @@ void preprocess(IMG* img){
          }
 }
 
+int argmax(BLOB* b){
+    //find index of channel that is maximum
+    float m=b->data[0][0][0];
+    int i=0;
+    for(int z=1;z<b->d;z++)
+        if(b->data[z][0][0] > m ){
+            m=b->data[z][0][0];
+            i=z;
+        }
+    return i;
+}
+
 int main(int argc, char* argv[]){
     if (argc!=2 || !strcmp(argv[1],"-h") || !strcmp(argv[1],"--help")){
         fprintf(stderr, "Usage: %s <input.png>\n", argv[0]);
@@ -33,9 +45,13 @@ int main(int argc, char* argv[]){
     //perform inference
     printf("Performing inference\n");
     BLOB* out = network(&mobilenetv2, img);
-    for(int i=0;i<5;i++)
-        printf("result %f\n",out->data[0][0][i]);
-    printf("d:%d h:%d w:%d\n", out->d, out->h, out->w);
+
+    //get class index of maximum
+    int class_idx=argmax(out);
+    printf("class idx: %d : %s\n",class_idx, labels[class_idx]);
+
+    //cleanup output
+    free_blob(out);
 
     //cleanup image
     destroy_img(img);
