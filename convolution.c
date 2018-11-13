@@ -81,21 +81,28 @@ BLOB* convolution(BLOB* input, conv_param_t* p){
     //create blob to hold output
     int height=(int)floor(((float)in->h - (float)p->Ky)/(float)p->Sy)+1;
     int width =(int)floor(((float)in->w - (float)p->Kx)/(float)p->Sx)+1;
-    BLOB* out = alloc_blob(p->num_out, height, width);
+    BLOB* out;
 
     //load bias if required
-    float* bias = NULL;
-    if(p->bias!=NULL) bias=load_1d(p->bias, p->num_out);
+    if(p->bias==NULL){
+        //zero init
+        out = calloc_blob(p->num_out, height, width);
+    }else{
+        //not required to calloc
+        out = alloc_blob(p->num_out, height, width);
 
-    //set bias or init with zeroes
-    for(int o=0;o<out->d;o++)
-        for(int m=0;m<out->h;m++)
-            for(int n=0;n<out->w;n++)
-                out->data[o][m][n]=(bias!=NULL)?bias[o]:0.0f;
+        //load bias values from file
+        float* bias =load_1d(p->bias, p->num_out);
 
-    //cleanup bias if initialized
-    if(bias!=NULL) free(bias);
+        //set bias or init with zeroes
+        for(int o=0;o<out->d;o++)
+            for(int m=0;m<out->h;m++)
+                for(int n=0;n<out->w;n++)
+                    out->data[o][m][n]=bias[o];
 
+        //cleanup bias
+        free(bias);
+    }
 
     //load weights
     BLOB* w = load_weights(in, p);
