@@ -36,11 +36,11 @@ BLOB* load_weights(BLOB* b, conv_param_t* p){
     //allocate 3D blob, and emulate 4D in KxKy later
     BLOB* w=alloc_blob(p->num_out, b->d, Ky*Kx);
 
-
     //fill 4D weight structure
-    for(int o=0;o<p->num_out/p->group;o++)
-        for(int i=0;i<b->d/p->group;i++)
-            fread(w->data[o][i],sizeof(float),Ky*Kx, fp);
+    for(int g=0;g<p->group;g++)
+        for(int o=g*(p->num_out/p->group);o<(g+1)*(p->num_out/p->group);o++)
+            for(int i=g*(b->d/p->group);i<(g+1)*(b->d/p->group);i++)
+                fread(w->data[o][i],sizeof(float),Ky*Kx, fp);
 
     //close file
     fclose(fp);
