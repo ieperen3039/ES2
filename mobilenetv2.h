@@ -19,7 +19,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=32,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -65,7 +65,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=32,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -110,7 +110,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=32,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -155,7 +155,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=16,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -201,7 +201,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=96,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -246,7 +246,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=96,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -291,7 +291,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=24,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -337,7 +337,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=144,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -382,7 +382,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=144,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -427,7 +427,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=24,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -483,7 +483,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=144,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -528,7 +528,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=144,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -573,7 +573,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=32,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -619,7 +619,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=192,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -664,7 +664,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=192,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -709,7 +709,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=32,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -764,7 +764,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=192,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -809,7 +809,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=192,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -854,7 +854,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=32,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -910,7 +910,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=192,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -955,7 +955,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=192,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -1000,7 +1000,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=64,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -1046,7 +1046,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=384,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -1091,7 +1091,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=384,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -1136,7 +1136,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=64,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -1192,7 +1192,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=384,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -1237,7 +1237,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=384,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -1282,7 +1282,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=64,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -1338,7 +1338,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=384,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -1383,7 +1383,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=384,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -1428,7 +1428,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=64,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -1483,7 +1483,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=384,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -1528,7 +1528,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=384,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -1573,7 +1573,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=96,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -1618,7 +1618,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=576,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -1663,7 +1663,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=576,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -1708,7 +1708,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=96,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -1766,7 +1766,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=576,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -1811,7 +1811,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=576,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -1856,7 +1856,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=96,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -1911,7 +1911,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=567,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -1956,7 +1956,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=567,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -2001,7 +2001,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=160,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -2046,7 +2046,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=960,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -2091,7 +2091,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=960,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -2136,7 +2136,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=160,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -2194,7 +2194,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=960,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -2239,7 +2239,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=960,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -2284,7 +2284,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=160,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -2339,7 +2339,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=960,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -2384,7 +2384,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=960,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=3,
                 .Kx=3,
 
@@ -2429,7 +2429,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=320,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -2475,7 +2475,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=1280,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
@@ -2536,7 +2536,7 @@ Network mobilenetv2={
                 //number of output feature maps
                 .num_out=1000,
 
-                //kernels sizes
+                //kernel sizes
                 .Ky=1,
                 .Kx=1,
 
