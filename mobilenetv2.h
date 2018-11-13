@@ -1996,7 +1996,7 @@ Network mobilenetv2={
         { //conv5_3_linear (idx=51)
             .name="conv5_3_linear",
             .type=CONVOLUTION,
-            .input=40,
+            .input=50,
             .param.conv={
                 //number of output feature maps
                 .num_out=160,
@@ -2037,18 +2037,6 @@ Network mobilenetv2={
                 .fc=false
            }
         },//end of conv5_3_linear
-
-
-
-
-
-
-
-
-
-
-
-
 
         { //conv6_1_expand (idx=52)
             .name="conv6_1_expand",
