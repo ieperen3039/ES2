@@ -2,8 +2,8 @@ CC=gcc
 CFLAGS= -Wall
 LDFLAGS= -lpng -lm
 
-SRC=$(wildcard *.c)
-OBJS=$(SRC:.c=.o)
+SRCS=$(wildcard *.c)
+OBJS=$(SRCS:.c=.o)
 EXE=mobilenetv2
 
 
@@ -23,11 +23,17 @@ $(EXE):$(OBJS)
 
 #download input image
 $(RAW_IMAGE):
-		wget "http://farm1.static.flickr.com/159/403176078_a2415ddf33.jpg" -O $@
+	wget "http://farm1.static.flickr.com/159/403176078_a2415ddf33.jpg" -O $@
 
 #scale the input image
 $(PROCESSED_IMAGE):$(RAW_IMAGE)
-		convert $< -resize 224x224! $@
+	convert $< -resize 224x224! $@
+
+.depend: $(SRCS)
+	rm -f ./.depend
+	$(CC) $(CFLAGS) -MM $^ -MF $@;
+
+include .depend
 
 clean:
-	@rm -f $(OBJS) $(EXE) $(RAW_IMAGE) $(PROCESSED_IMAGE)
+	@rm -f $(OBJS) $(EXE) $(RAW_IMAGE) $(PROCESSED_IMAGE) .depend

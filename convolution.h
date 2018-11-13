@@ -19,6 +19,9 @@ typedef struct {
     //padding
     int pad;
 
+    //group
+    int group;
+
     //weights
     const char* weights;
 

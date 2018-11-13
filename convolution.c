@@ -34,8 +34,8 @@ BLOB* load_weights(BLOB* b, conv_param_t* p){
 
 
     //fill 4D weight structure
-    for(int o=0;o<p->num_out;o++)
-        for(int i=0;i<b->d;i++)
+    for(int o=0;o<p->num_out/p->group;o++)
+        for(int i=0;i<b->d/p->group;i++)
             fread(w->data[o][i],sizeof(float),p->Ky*p->Kx, fp);
 
     //close file
@@ -65,18 +65,18 @@ float* load_1d(const char* fname, size_t num){
 }
 
 //convolution, NOTE: destructive of BLOB* in. duplicate if further required!
-BLOB* convolution(BLOB* in, conv_param_t* p){
+BLOB* convolution(BLOB* input, conv_param_t* p){
+
+    //use local pointer
+    BLOB* in = input;
 
     //padding of input if required
-    if(p->pad!=0){
-        BLOB* padded = pad(in, p->pad);
-        free(in);
-        in=padded;
-    }
+    if(p->pad!=0)
+        in = pad(in, p->pad);
 
     //create blob to hold output
-    int height=ceil(((float)in->h - (float)p->Ky)/(float)p->Sy);
-    int width =ceil(((float)in->w - (float)p->Kx)/(float)p->Sx);
+    int height=(int)floor(((float)in->h - (float)p->Ky)/(float)p->Sy)+1;
+    int width =(int)floor(((float)in->w - (float)p->Kx)/(float)p->Sx)+1;
     BLOB* out = alloc_blob(p->num_out, height, width);
 
     //load bias if required
@@ -97,19 +97,21 @@ BLOB* convolution(BLOB* in, conv_param_t* p){
     BLOB* w = load_weights(in, p);
 
     //perform convolution
-    for(int o=0;o<out->d;o++)
-        for(int i=0;i<in->d;i++)
-            for(int m=0;m<out->h;m++)
-                for(int n=0;n<out->w;n++)
-                    for(int k=0;k<p->Ky;k++)
-                        for(int l=0;l<p->Kx;l++)
-                            out->data[o][m][n]+=in->data[i][m*p->Sy+k][n*p->Sx+l]*w->data[o][i][k*p->Kx+l];
+    for(int g=0;g<p->group;g++)
+        for(int o=g*(out->d/p->group);o<(g+1)*(out->d/p->group);o++)
+            for(int i=g*(in->d/p->group);i<(g+1)*(in->d/p->group);i++)
+                for(int m=0;m<out->h;m++)
+                    for(int n=0;n<out->w;n++)
+                        for(int k=0;k<p->Ky;k++)
+                            for(int l=0;l<p->Kx;l++)
+                                out->data[o][m][n]+=in->data[i][m*p->Sy+k][n*p->Sx+l]*w->data[o][i][k*p->Kx+l];
 
     //free weights
     free_blob(w);
 
-    //done with input blob, free as well
-    free_blob(in);
+    //done with padded blob, free
+    if(p->pad!=0)
+        free_blob(in);
 
     //perform batchnorm if needed
     if(p->bn_mean!=NULL){

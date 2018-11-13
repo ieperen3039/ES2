@@ -35,6 +35,7 @@ int main(int argc, char* argv[]){
     BLOB* out = network(&mobilenetv2, img);
     for(int i=0;i<5;i++)
         printf("result %f\n",out->data[0][0][i]);
+    printf("d:%d h:%d w:%d\n", out->d, out->h, out->w);
 
     //cleanup image
     destroy_img(img);

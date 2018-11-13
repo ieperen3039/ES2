@@ -44,10 +44,9 @@ void free_blob(BLOB* b){
 
 //duplicate blob
 BLOB* duplicate_blob(BLOB* b){
-    BLOB* out = (BLOB*)malloc(sizeof(BLOB));
-    out->d=b->d;
-    out->h=b->h;
-    out->w=b->w;
-    memcpy(out->data, b->data, sizeof(float)*b->d*b->h*b->w);
+    BLOB* out = alloc_blob(b->d, b->h, b->w);
+    for(int z=0;z<out->d;z++)
+        for(int y=0;y<out->h;y++)
+            memcpy(out->data[z][y], b->data[z][y], sizeof(float)*b->w);
     return out;
 }
