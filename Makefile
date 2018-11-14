@@ -13,22 +13,28 @@ endif
 
 SRCS=$(wildcard *.c)
 OBJS=$(SRCS:.c=.o)
+DEPS=$(SRCS:.c=.d)
 EXE=mobilenetv2
 
 
 RAW_IMAGE=koala.jpeg
 PROCESSED_IMAGE=scaled_$(RAW_IMAGE:.jpeg=.png)
 
-.PHONY:$(EXE)
 run:$(EXE) $(PROCESSED_IMAGE)
 	./$(EXE) $(PROCESSED_IMAGE)
 
+#link the executable
+.PRECIOUS:$(EXE)
 $(EXE):$(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
+#compile c files
 %.o:%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+#generate dependency files
+%.d:%.c
+	$(CC) $(CFLAGS) -MM $^ -MF $@;
 
 #download input image
 $(RAW_IMAGE):
@@ -38,13 +44,13 @@ $(RAW_IMAGE):
 $(PROCESSED_IMAGE):$(RAW_IMAGE)
 	convert $< -resize 224x224! $@
 
-.depend: $(SRCS)
-	rm -f ./.depend
-	$(CC) $(CFLAGS) -MM $^ -MF $@;
 
-include .depend
+#build dependency files if we are not cleaning
+ifneq ($(filter clean,$(MAKECMDGOALS)),clean)
+-include $(DEPS)
+endif
 
-CLEAN=$(OBJS) $(EXE) $(RAW_IMAGE) $(PROCESSED_IMAGE) .depend
+CLEAN=$(OBJS) $(DEPS) $(EXE) $(RAW_IMAGE) $(PROCESSED_IMAGE) .depend
 ifdef DEBUG
 #add extra cleanup when debug is set (to clean up dumped blobs)
 CLEAN+= *.txt *.bin
