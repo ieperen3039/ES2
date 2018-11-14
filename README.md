@@ -1,8 +1,10 @@
-#Image classification with Convolutional Neural Networks
+Image classification with Convolutional Neural Networks
+---------------------------------------------------------
 The code provided here is a pure C implementation of Google's [mobilenetv2](https://arxiv.org/abs/1801.04381), trained for the [imagenet](www.image-net.org/) competition.
-As inspired by the amazing console game [robotfindkitten](https://en.wikipedia.org/wiki/Robotfindskitten) this network is particularly happy when it finds kitten :)
+As inspired by the legendary console game [robotfindkitten](https://en.wikipedia.org/wiki/Robotfindskitten) this network is particularly happy when it finds kitten :)
 
-#Usage
+Usage
+-----
 To download a single image and pass it through the network:
 ```shell
 make check
@@ -18,7 +20,8 @@ This is to be expected though, and the correctness of the network is verified by
 
 In principle all images from [imagenet](www.image-net.org/) can be used (and of course also new images!).
 
-#Requirements
+Requirements
+------------
 To be able to use this network not much is needed.
 A C-compiler and libpng should be sufficient, although some manual effort might be required if libpng (possibly the development files), ```make```, ```gcc```, ```wget``` and/or ```convert``` are not present on your system.
 Most modern linux distributions will have these available however.
