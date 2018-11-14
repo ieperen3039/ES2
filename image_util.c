@@ -28,9 +28,7 @@
 #include "image_util.h"
 #include <stdlib.h>
 #include <png.h>
-
-//define an error function that prints a message to stderr and then aborts
-#define error(fmt_, ...) {fprintf(stderr, fmt_, ##__VA_ARGS__); exit(-1);}
+#include "logging.h"
 
 void destroy_img(IMG* img){
    for(int c=0;c<img->channels;c++){

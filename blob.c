@@ -1,6 +1,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include "blob.h"
+#include <stdio.h>
+#include "logging.h"
+
+
+typedef struct {
+    int d;
+    int h;
+    int w;
+} bin_blob_hdr;
+
 
 //generic blob allocation which can be called with malloc or calloc as allocation function
 BLOB* __alloc_blob(void*(*alloc)(size_t size), int d, int h, int w){
@@ -49,4 +59,107 @@ BLOB* duplicate_blob(BLOB* b){
         for(int y=0;y<out->h;y++)
             memcpy(out->data[z][y], b->data[z][y], sizeof(float)*b->w);
     return out;
+}
+
+//write blob to text file
+void blob_write_txt(const char* fname, BLOB* b){
+
+    //open file for writing
+    FILE* fp = fopen(fname, "wt");
+    if(fp==NULL)
+        error("ERROR: unable to open file %s for writing\n", fname);
+
+    //write out dimensions
+    fprintf(fp,"%d,%d,%d\n",b->d,b->h,b->w);
+
+    //write out all data, one line per element
+    for(int o=0;o<b->d;o++)
+        for(int m=0;m<b->h;m++)
+            for(int n=0;n<b->w;n++)
+                fprintf(fp,"%f\n",b->data[o][m][n]);
+    fclose(fp);
+}
+
+//write blob to binary file
+void blob_write_bin(const char* fname, BLOB* b){
+
+    //open file for writing
+    FILE* fp = fopen(fname, "wb");
+    if(fp==NULL)
+        error("ERROR: unable to open file %s for writing\n", fname);
+
+    //create blob header
+    bin_blob_hdr hdr;
+    hdr.d=b->d;
+    hdr.h=b->h;
+    hdr.w=b->w;
+
+    //write out header
+    fwrite(&hdr, sizeof(bin_blob_hdr), 1, fp);
+
+    //write out raw float data
+    for(int o=0;o<b->d;o++)
+        for(int m=0;m<b->h;m++)
+            fwrite(b->data[o][m], sizeof(float), b->w, fp);
+
+
+    //close the file
+    fclose(fp);
+}
+
+//load blob from text file
+BLOB* blob_read_txt(const char* fname){
+
+    //open file for reading
+    FILE* fp = fopen(fname, "rt");
+    if(fp==NULL)
+        error("ERROR: unable to open file %s for reading\n", fname);
+
+    //get dimensions
+    int d,h,w;
+    fscanf(fp,"%d,%d,%d\n",&d,&h,&w);
+
+    //allocate BLOB
+    BLOB* b = alloc_blob(d,h,w);
+
+    //fill BLOB with data
+    for(int o=0;o<b->d;o++)
+        for(int m=0;m<b->h;m++)
+            for(int n=0;n<b->w;n++)
+                fscanf(fp,"%f\n",&(b->data[o][m][n]));
+
+    //close the file
+    fclose(fp);
+
+    //return the parsed blob
+    return b;
+}
+
+//load blob from binary file
+BLOB* blob_read_bin(const char* fname){
+
+    //open file for reading
+    FILE* fp = fopen(fname, "rb");
+    if(fp==NULL)
+        error("ERROR: unable to open file %s for reading\n", fname);
+
+    //create blob header
+    bin_blob_hdr hdr;
+
+    //read out header
+    fread(&hdr, sizeof(bin_blob_hdr), 1, fp);
+
+    //allocate blob
+    BLOB* b = alloc_blob(hdr.d, hdr.h, hdr.w);
+
+    //read out raw float data
+    for(int o=0;o<b->d;o++)
+        for(int m=0;m<b->h;m++)
+            fread(b->data[o][m], sizeof(float), b->w, fp);
+
+    //close the file
+    fclose(fp);
+
+    //return the blob
+    return b;
 }

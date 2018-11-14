@@ -1,6 +1,18 @@
 #include "network.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
+#include "logging.h"
+
+#ifndef SILENT
+//mapping of layer_type enum to strings
+static const char* layer_type_str[4] ={
+    "convolution",
+    "element wise",
+    "pooling",
+    "none",
+};
+#endif //SILENT
 
 BLOB* network(Network* net, IMG* img){
 
@@ -22,25 +34,28 @@ BLOB* network(Network* net, IMG* img){
     layer_blobs[0]=input;
 
     //iterate through the layers in the network
-    bool done=false;
-    for(int l=0;!done;l++){
+    for(int l=0;l<num_layers;l++){
 
         //select layer "l" from the network
         layer_t layer=net->layers[l];
 
+        //blobl pointer to hold output of this layer
+        BLOB* out;
+
+        //in verbose mode print some progress to the user
+        info("Performing %s operation of layer %s\n", layer_type_str[layer.type], layer.name);
+
         //depending on type the actions differ
         switch(layer.type){
             case CONVOLUTION:
-                printf("Performing convolution of layer %s\n", layer.name);
-                layer_blobs[l+1] = convolution(
+                out = convolution(
                     layer_blobs[layer.input],
                     &(layer.param.conv)
                 );
             break;
 
             case ELTWISE:
-                printf("Performing elementwise operation of layer %s\n", layer.name);
-                layer_blobs[l+1] = eltwise2(
+                out = eltwise2(
                     layer_blobs[layer.input],
                     layer_blobs[layer.input2],
                     &(layer.param.eltwise)
@@ -49,18 +64,45 @@ BLOB* network(Network* net, IMG* img){
             break;
 
             case POOLING:
-                printf("Performing pooling of layer %s\n", layer.name);
-                layer_blobs[l+1] = pooling(
+                out = pooling(
                     layer_blobs[layer.input],
                     &(layer.param.pool)
                 );
             break;
 
             case NONE:
-                //last layer in the list
-                done=true;
+                //last layer in the list - Note: should never reach here
+                out=NULL;
             break;
         }
+
+        //store out in the blob holding structure to be used by future layers
+        //NOTE: currently all blobs are stored until the network is fully evaluated,
+        //with smarter management this storage could be reduced significantly
+        layer_blobs[l+1]=out;
+
+        #ifdef DEBUG
+        if(out){
+            // Some example on how to use the blob IO routines
+            // CAn be very useful to debug problems in the output of your network
+
+            //create a name for the output file
+            char* fname = (char*) malloc(sizeof(char)*strlen(layer.name)+4);
+            sprintf(fname, "%s.txt", layer.name);
+
+            //write to file
+            blob_write_txt(fname, out);                 //text version
+            //blob_write_bin(fname, layer_blobs[l+1]);  //binary version
+
+            //read from file
+            //out=blob_read_txt(fname);  //text version
+            //out=blob_read_bin(fname);  //binary version
+
+            //free the file name
+            free(fname);
+        }
+        #endif //DEBUG
+
     }
     //done evaluating the network
 

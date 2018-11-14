@@ -2,6 +2,15 @@ CC=gcc
 CFLAGS= -Wall -std=gnu99
 LDFLAGS= -lpng -lm
 
+#pass some flags through to gcc when defined
+ifdef DEBUG
+	CFLAGS+= -DDEBUG
+endif
+ifdef SILENT
+	CFLAGS+= -DSILENT
+endif
+
+
 SRCS=$(wildcard *.c)
 OBJS=$(SRCS:.c=.o)
 EXE=mobilenetv2
@@ -35,5 +44,11 @@ $(PROCESSED_IMAGE):$(RAW_IMAGE)
 
 include .depend
 
+CLEAN=$(OBJS) $(EXE) $(RAW_IMAGE) $(PROCESSED_IMAGE) .depend
+ifdef DEBUG
+#add extra cleanup when debug is set (to clean up dumped blobs)
+CLEAN+= *.txt *.bin
+endif
+
 clean:
-	@rm -f $(OBJS) $(EXE) $(RAW_IMAGE) $(PROCESSED_IMAGE) .depend
+	@rm -f $(CLEAN)
