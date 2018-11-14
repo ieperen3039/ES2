@@ -1909,7 +1909,7 @@ Network mobilenetv2={
             .input=48,
             .param.conv={
                 //number of output feature maps
-                .num_out=567,
+                .num_out=576,
 
                 //kernel sizes
                 .Ky=1,
@@ -1954,7 +1954,7 @@ Network mobilenetv2={
             .input=49,
             .param.conv={
                 //number of output feature maps
-                .num_out=567,
+                .num_out=576,
 
                 //kernel sizes
                 .Ky=3,
@@ -1968,7 +1968,7 @@ Network mobilenetv2={
                 .pad=1,
 
                 //group
-                .group=567,
+                .group=576,
 
                 //weights
                 .weights="bins/conv5_3_dwise_weights.bin",
