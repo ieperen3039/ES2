@@ -33,6 +33,11 @@ int main(int argc, char* argv[]){
     if (argc!=2 || !strcmp(argv[1],"-h") || !strcmp(argv[1],"--help"))
         error("Usage: %s <input.png>\n", argv[0]);
 
+#ifndef SILENT
+    //set stdout to line buffered such that piping to "tee" does not delay
+    setlinebuf(stdout);
+#endif
+
     //read png into image structure
     info("Loading image %s\n",argv[1]);
     IMG* img = read_png(argv[1]);
@@ -50,8 +55,24 @@ int main(int argc, char* argv[]){
     if(!(class_idx>=0 && class_idx<=999))
         error("ERROR: provided class index (%d) is out of bounds!\n", class_idx);
 
+    //print the class index
+    printf("Detect class: %d\n", class_idx);
+
     //print the class label
-    info("It's a %s\n", labels[class_idx]);
+    switch(class_idx){
+        case 281:
+            printf("\033[0;33mRobot finds kitteh!\033[0m\n");
+        break;
+        case 285:
+            printf("\033[0;33mRobot finds \033[0;35mEgyptsjun\033[0;33m kitteh - so exotic!\033[0m\n");
+        break;
+        case 291:
+            printf("\033[0;33mRobot finds \033[0;34mKing of Kittehs\033[0;33m- much wow!\033[0m\n");
+        break;
+        default:
+            printf("\033[1;37mIz not kitteh. Itz a \"%s\"\033[0m\n", labels[class_idx]);
+        break;
+    }
 
     //cleanup output
     free_blob(out);
