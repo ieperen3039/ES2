@@ -67,7 +67,7 @@ void blob_write_txt(const char* fname, BLOB* b){
     //open file for writing
     FILE* fp = fopen(fname, "wt");
     if(fp==NULL)
-        error("ERROR: unable to open file %s for writing\n", fname);
+        error("unable to open file %s for writing\n", fname);
 
     //write out dimensions
     fprintf(fp,"%d,%d,%d\n",b->d,b->h,b->w);
@@ -86,7 +86,7 @@ void blob_write_bin(const char* fname, BLOB* b){
     //open file for writing
     FILE* fp = fopen(fname, "wb");
     if(fp==NULL)
-        error("ERROR: unable to open file %s for writing\n", fname);
+        error("unable to open file %s for writing\n", fname);
 
     //create blob header
     bin_blob_hdr hdr;
@@ -113,11 +113,12 @@ BLOB* blob_read_txt(const char* fname){
     //open file for reading
     FILE* fp = fopen(fname, "rt");
     if(fp==NULL)
-        error("ERROR: unable to open file %s for reading\n", fname);
+        error("unable to open file %s for reading\n", fname);
 
     //get dimensions
     int d,h,w;
-    fscanf(fp,"%d,%d,%d\n",&d,&h,&w);
+    if(fscanf(fp,"%d,%d,%d\n",&d,&h,&w)!=3)
+        error("parsing header from file %s\n", fname);
 
     //allocate BLOB
     BLOB* b = alloc_blob(d,h,w);
@@ -126,7 +127,8 @@ BLOB* blob_read_txt(const char* fname){
     for(int o=0;o<b->d;o++)
         for(int m=0;m<b->h;m++)
             for(int n=0;n<b->w;n++)
-                fscanf(fp,"%f\n",&(b->data[o][m][n]));
+                if(fscanf(fp,"%f\n",&(b->data[o][m][n]))!=1)
+                    error("reading float value from %s\n", fname);
 
     //close the file
     fclose(fp);
@@ -141,13 +143,14 @@ BLOB* blob_read_bin(const char* fname){
     //open file for reading
     FILE* fp = fopen(fname, "rb");
     if(fp==NULL)
-        error("ERROR: unable to open file %s for reading\n", fname);
+        error("unable to open file %s for reading\n", fname);
 
     //create blob header
     bin_blob_hdr hdr;
 
     //read out header
-    fread(&hdr, sizeof(bin_blob_hdr), 1, fp);
+    if(fread(&hdr, sizeof(bin_blob_hdr), 1, fp)!=1)
+        error("reading header from file %s\n", fname);
 
     //allocate blob
     BLOB* b = alloc_blob(hdr.d, hdr.h, hdr.w);
@@ -155,7 +158,8 @@ BLOB* blob_read_bin(const char* fname){
     //read out raw float data
     for(int o=0;o<b->d;o++)
         for(int m=0;m<b->h;m++)
-            fread(b->data[o][m], sizeof(float), b->w, fp);
+            if(fread(b->data[o][m], sizeof(float), b->w, fp)!=b->w)
+                error("reading float data from %s\n",fname);
 
     //close the file
     fclose(fp);

@@ -9,7 +9,7 @@
 #endif
 
 //define an error function that prints a message to stderr and then aborts
-#define error(fmt_, ...) {fprintf(stderr, fmt_, ##__VA_ARGS__); exit(-1);}
+#define error(fmt_, ...) {fprintf(stderr,"ERROR: "); fprintf(stderr, fmt_, ##__VA_ARGS__); exit(-1);}
 
 
 #endif

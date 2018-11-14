@@ -2,15 +2,14 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include "logging.h"
 
 //perform  pooling
 BLOB* pooling(BLOB* in, pool_param_t* p){
 
     //for now this framework only supports global pooling
-    if(!p->global){
-        fprintf(stderr, "ERROR: only global pooling supported!\n");
-        abort();
-    }
+    if(!p->global)
+        error("only global pooling supported!\n");
 
     //global pooling, so output is 1x1
     BLOB* out = alloc_blob(in->d, 1, 1);

@@ -53,7 +53,7 @@ int main(int argc, char* argv[]){
     //get class index of maximum
     int class_idx=argmax(out);
     if(!(class_idx>=0 && class_idx<=999))
-        error("ERROR: provided class index (%d) is out of bounds!\n", class_idx);
+        error("provided class index (%d) is out of bounds!\n", class_idx);
 
     //print the class index
     printf("Detect class: %d\n", class_idx);

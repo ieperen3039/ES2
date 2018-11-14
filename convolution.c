@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include "logging.h"
 
 //add padding to blob
 BLOB* pad(BLOB* in, int pad){
@@ -24,10 +25,8 @@ BLOB* load_weights(BLOB* b, conv_param_t* p){
 
     //open weights file for reading
     FILE* fp = fopen(p->weights, "rb");
-    if(fp==NULL){
-        fprintf(stderr, "ERROR: could not open file %s for reading\n",p->weights);
-        exit(-1);
-    }
+    if(fp==NULL)
+        error("could not open file %s for reading\n",p->weights);
 
     //for fully connected layers the kernel size is equal to the input size
     int Ky=(p->fc)?b->h:p->Ky;
@@ -40,7 +39,8 @@ BLOB* load_weights(BLOB* b, conv_param_t* p){
     for(int g=0;g<p->group;g++)
         for(int o=g*(p->num_out/p->group);o<(g+1)*(p->num_out/p->group);o++)
             for(int i=g*(b->d/p->group);i<(g+1)*(b->d/p->group);i++)
-                fread(w->data[o][i],sizeof(float),Ky*Kx, fp);
+                if(fread(w->data[o][i],sizeof(float),Ky*Kx, fp)!=Ky*Kx)
+                    error("loading weights from file %s\n", p->weights);
 
     //close file
     fclose(fp);
@@ -53,14 +53,13 @@ float* load_1d(const char* fname, size_t num){
 
     //open file for reading
     FILE* fp = fopen(fname, "rb");
-    if(fp==NULL){
-        fprintf(stderr, "ERROR: could not open file %s for reading\n",fname);
-        exit(-1);
-    }
+    if(fp==NULL)
+        error("could not open file %s for reading\n",fname);
 
     //read in array
     float* arr= (float*) malloc(sizeof(float)*num);
-    fread(arr,sizeof(float), num, fp);
+    if(fread(arr,sizeof(float), num, fp)!=num)
+        error("loading data from file %s\n", fname);
 
     //close file
     fclose(fp);

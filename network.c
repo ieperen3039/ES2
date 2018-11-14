@@ -40,7 +40,7 @@ BLOB* network(Network* net, IMG* img){
         layer_t layer=net->layers[l];
 
         //blobl pointer to hold output of this layer
-        BLOB* out;
+        BLOB* out=NULL;
 
         //in verbose mode print some progress to the user
         info("Performing %s operation of layer %s\n", layer_type_str[layer.type], layer.name);
