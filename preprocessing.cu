@@ -15,7 +15,7 @@ void cpu_preprocess(BLOB* img){
 
 
 //GPU device code (what the threads execute)
-__global__ void gpu_device_preprocess(float* data){
+__global__ void gpu_device_preprocess(float* data_in, float* data_out){
     //This code gets executed by each thread in the GPU
     //First step is identifying which thread we are
 
@@ -37,7 +37,7 @@ __global__ void gpu_device_preprocess(float* data){
     //load single pixel from global memory into register
     //HINT: the global memory is very slow, so if you have multiple uses of the same pixel, it might be smart to look into the "shared memory".
     //Here however there is only one use of each pixel, so nothing to be gained from using shared memory
-    float value = data[ global_z*img_height*img_width + global_y*img_width + global_x];
+    float value = data_in[ global_z*img_height*img_width + global_y*img_width + global_x];
 
     //each channel (Z) needs to correct with a different mean value
     float mean[3]={
@@ -51,7 +51,10 @@ __global__ void gpu_device_preprocess(float* data){
 
     //time to commit the value to the global memory
     //note that we swap RGB to BGR (2-z), as required by the preprocessing
-    data[(2-global_z)*img_width*img_height + global_y*img_width + global_x]=value;
+    //if we did not need to swap, it would have been possible to just overwrite the input (compute in-place)
+    //however, now that we swap, we might destroy the input data of another thread, hence synchronisation or an extra output buffer is required
+    //synchronisation between threadblocks is costly, and the global memory is large hence we just allocated an extra output buffer for this example
+    data_out[(2-global_z)*img_width*img_height + global_y*img_width + global_x]=value;
 }
 
 //GPU host code (called from the CPU, copies data back and forth and launched the GPU thread)
@@ -110,21 +113,29 @@ void gpu_preprocess(BLOB* img){
     blob2gpu(device_data, img);
 #endif
 
+    //next we also allocate a buffer that will hold the output
+    float* device_out;
+    cudaCheckError(cudaMalloc(&device_out, blob_bytes(img)));
+
     //Perform the preprocessing on the GPU
     info("Preprocessing on GPU...\n");
-    gpu_device_preprocess<<< grid, block >>>(device_data);
+    gpu_device_preprocess<<< grid, block >>>(device_data, device_out);
 
     //We use "peekatlasterror" since a kernel launch does not return a cudaError_t to check for errors
     cudaCheckError(cudaPeekAtLastError());
 
 #ifndef SHORTHANDS
     //copy the processed image data back from GPU global memory to CPU memory
-    cudaCheckError(cudaMemcpy(img->data, device_data, blob_bytes(img), cudaMemcpyDeviceToHost));
+    cudaCheckError(cudaMemcpy(img->data, device_out, blob_bytes(img), cudaMemcpyDeviceToHost));
 
-    //free the allocated GPU memory for this channel
-    cudaCheckError(cudaFree(device_data));
+    //free the allocated GPU memory that holds the output
+    cudaCheckError(cudaFree(device_out));
 #else
     //again a simple shorthand to transfer a blob back from the gpu to the cpu and free the allocated memory
     gpu2blob(img, device_data);
 #endif
+
+    //finally we also need to release the space that holds the input on the GPU
+    cudaCheckError(cudaFree(device_data));
+
 }
