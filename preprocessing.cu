@@ -15,7 +15,7 @@ void cpu_preprocess(IMG* img){
 
 
 //GPU device code (what the threads execute)
-__global__ void gpu_device_preprocess(float** channel_data, int img_width){
+__global__ void gpu_device_preprocess(float* data, int img_width, int img_height){
     //This code gets executed by each thread in the GPU
     //First step is identifying which thread we are
 
@@ -30,11 +30,11 @@ __global__ void gpu_device_preprocess(float** channel_data, int img_width){
     //note that global_z==local_z! The grid of blocks is only 2D (x and y), so no blocks in the channel dimension!
     unsigned int global_z = threadIdx.z;
 
+
     //load single pixel from global memory into register
     //HINT: the global memory is very slow, so if you have multiple uses of the same pixel, it might be smart to look into the "shared memory".
     //Here however there is only one use of each pixel, so nothing to be gained from using shared memory
-    //recall that the XxY arrays were flattend to a 1D array, so we have to do our own address calculations to get to the right pixel;
-    float value = channel_data[global_z][global_y*img_width+global_x];
+    float value = data[global_z*img_width*img_height + global_y*img_width + global_x];
 
     //each channel (Z) needs to correct with a different value
     float mean[3]={
@@ -47,9 +47,8 @@ __global__ void gpu_device_preprocess(float** channel_data, int img_width){
     value= (value-mean[global_z]) * 0.017f;
 
     //time to commit the value to the global memory
-    //note that we swap RGB to BGR, as required by the preprocessing, by inverting bit 1
-    unsigned int z = (global_z&(~0x2))|(~(global_z&0x2));
-    channel_data[z][global_y*img_width+global_z] = value;
+    //note that we swap RGB to BGR (2-z), as required by the preprocessing
+    data[(2-global_z)*img_width*img_height + global_y*img_width + global_x]=value;
 }
 
 //GPU host code (called from the CPU, copies data back and forth and launched the GPU thread)
@@ -65,37 +64,42 @@ void gpu_preprocess(IMG* img){
     */
 
     //let's decide on a number of blocks per channel
-    int numBlocksX=4;
-    int numBlocksY=4;
-    int threadsPerBlockX=img->width/numBlocksX; //NOTE: this should have remainder==0 !!
-    int threadsPerBlockY=img->width/numBlocksY; //NOTE: this should have remainder==0 !!
+    int numBlocksX=16;
+    int numBlocksY=16;
+    int threadsPerBlockX=img->width/numBlocksX;  //NOTE: this should have remainder==0 !!
+    int threadsPerBlockY=img->height/numBlocksY; //NOTE: this should have remainder==0 !!
 
-    dim3 grid( numBlocksX, numBlocksY ); // numBlocksX x numBlocksY ( x 1)
-    dim3 block(threadsPerBlockX, threadsPerBlockY, 3  ); // threadsPerBlockX x threadsPerBlockY x 3
 
-    //Allocate 3 channels on the global memory of the GPU, and transfer data from CPU to GPU
-    float* device_channels[3];
+    info("Grid dimensions %d x %d (x 1)\n", numBlocksX,numBlocksY);
+    info("Block dimensions %d x %d x 3\n", threadsPerBlockX,threadsPerBlockY);
+
+    dim3 grid( numBlocksX, numBlocksY, 1 ); // numBlocksX x numBlocksY ( x 1)
+    dim3 block(threadsPerBlockX, threadsPerBlockY, 3); // threadsPerBlockX x threadsPerBlockY x 3
+
+    //to save on some transfer overhead, the image data is flattened into a 1D array on the GPU
+    //first allocate the space of 3 complete channels (Height x Width x Depth)
+
+    //pointer to data on GPU
+    float* device_data;
+
+    //variable for holding return values of cuda functions
+    cudaError_t err;
+
+    //malloc on the GPU
+    err=cudaMalloc(&device_data, 3*img->width*img->height*sizeof(float));
+
+    //check for errors (NOTE: this is not a standard cuda function. Check logging.h)
+    cudaCheckError(err)
+
+    //copy the data over to the GPU
     for(int c=0;c<3;c++){
-
-        //variable for holding return values of cuda functions
-        cudaError_t err;
-
-        //allocate the space of 1 complete channel (Height x Width)
-        err=cudaMalloc(&device_channels[c], img->width*img->height*sizeof(float));
-
-        //Here we check for errors of this cuda call
-        //See logging.h for the implementation of this error check (it's not a default cuda function)
-        cudaCheckError(err);
-
-        //Now copy the channel from the CPU to the GPU (note: now directly wrapped in the error checking function)
-        //also, the XY grid is flattend into a single 1D grid so only one cudaMalloc is needed per channel.
-        //channels could of course also be flattened, but for the example we won't do that
         for(int y=0;y<img->height;y++)
-            cudaCheckError(cudaMemcpy(&(device_channels[c][y*img->width]), img->data[c][y], img->width*sizeof(float), cudaMemcpyHostToDevice));
+            cudaCheckError(cudaMemcpy(&(device_data[c*img->width*img->height + y*img->width]), img->data[c][y],img->width*sizeof(float), cudaMemcpyHostToDevice));
     }
 
     //Perform the preprocessing on the GPU
-    gpu_device_preprocess<<< grid, block >>>(device_channels, img->width);
+    info("Preprocessing on GPU...\n");
+    gpu_device_preprocess<<< grid, block >>>(device_data, img->width, img->height);
 
     //We use "peekatlasterror" since a kernel launch does not return a cudaError_t to check for errors
     cudaCheckError(cudaPeekAtLastError());
@@ -103,9 +107,10 @@ void gpu_preprocess(IMG* img){
     //copy the processed image data back from GPU global memory to CPU memory
     for(int c=0;c<3;c++){
         for(int y=0;y<img->height;y++)
-            cudaCheckError(cudaMemcpy(img->data[c][y], &(device_channels[c][y*img->width]), img->width*sizeof(float), cudaMemcpyDeviceToHost));
+            cudaCheckError(cudaMemcpy(img->data[c][y], &(device_data[c*img->height*img->width + y*img->width]), img->width*sizeof(float), cudaMemcpyDeviceToHost));
 
-        //free the allocate GPU memory
-        cudaCheckError(cudaFree(device_channels[c]));
     }
+
+    //free the allocated GPU memory for this channel
+    cudaCheckError(cudaFree(device_data));
 }

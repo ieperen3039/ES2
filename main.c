@@ -34,7 +34,11 @@ int main(int argc, char* argv[]){
 
     //Do preprocessing of the image
     info("Preprocessing image\n");
+#ifdef CPU_ONLY
     cpu_preprocess(img);
+#else
+    gpu_preprocess(img);
+#endif
 
     //perform inference
     info("Performing inference\n");
