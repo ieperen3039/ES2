@@ -60,42 +60,55 @@ void gpu_preprocess(BLOB* img){
     //GPU code
 
     /*
-     *  Our high level strategy to perform the preprocessing in parallel in this example is to split each of the 3 channels into a number of blocks (numBlocks).
-     *  Each block contains thus channel_length/numBlocks elements
-     *  These blocks will be mapped to the Streaming Multiprocessors of the GPU.
-     *  For each block the preprocessing is performed
+     * The high level strategy is to map the pixels of the image to threads in the GPU, and have each thread preprocess a single pixel
+     * The GPU supports a 3-dimenional grid of 3-dimensional blocks, which can be a good fit for our channels x height x width image
+     * In fact, we will make 3 dimensional thread blocks, which are 3 deep in the z dimension to map to the RGB channels
+     * the x and y dimensions will be mapped to the width and height of the image
+     * However, each threadblock can only support a limited number of threads (less than we have pixels)
+     * Therefore we need to divide the image in multiple blocks using the grid
+     * The grid will be 2 dimensional (only x and y), since the Z dimension is already captured inside the threadblock
     */
 
-    //let's decide on a number of blocks per channel
+    //let's first divide the X and Y dimensions of the image into a number of blocks here
     int numBlocksX=16;
     int numBlocksY=16;
-    int threadsPerBlockX=img->w/numBlocksX;  //NOTE: this should have remainder==0 !!
-    int threadsPerBlockY=img->h/numBlocksY; //NOTE: this should have remainder==0 !!
+
+    //The number of blocks determines the number of threads our blocks need to have in both X and Y to cover the complete image
+    int threadsPerBlockX=img->w/numBlocksX;  //NOTE: this should have remainder==0 for this code!!
+    int threadsPerBlockY=img->h/numBlocksY;  //NOTE: this should have remainder==0 for this code!!
+    //int threadsPerBlockZ=3;                //not required, but correct ;)
 
 
+    //Let's tell the user what is happening
     info("Grid dimensions %d x %d (x 1)\n", numBlocksX,numBlocksY);
     info("Block dimensions %d x %d x 3\n", threadsPerBlockX,threadsPerBlockY);
 
-    dim3 grid( numBlocksX, numBlocksY, 1 ); // numBlocksX x numBlocksY ( x 1)
-    dim3 block(threadsPerBlockX, threadsPerBlockY, 3); // threadsPerBlockX x threadsPerBlockY x 3
+    //To specify the grid and block dimensions, cuda uses this special "dim3" datatype.
+    //Note that our grid is actually only 2D (as far as we are concerned), so we set the z-dimension to be 1
+    dim3 grid( numBlocksX, numBlocksY, 1 );             // numBlocksX x numBlocksY ( x 1)
+    dim3 block(threadsPerBlockX, threadsPerBlockY, 3);  // threadsPerBlockX x threadsPerBlockY x 3
 
-    //to save on some transfer overhead, the image data is flattened into a 1D array on the GPU
-    //first allocate the space of 3 complete channels (Height x Width x Depth)
+    //Now that we have decided on the grid and block dimensions, it's time to copy our
+    //image data over from the CPU to the GPUs global memory
 
-    //pointer to data on GPU
+    //First create a pointer to data on the GPU
     float* device_data;
-
-    //variable for holding return values of cuda functions
+#ifndef SHORTHANDS
+    //This variable holds return values of cuda functions, which can be very useful for error checking
     cudaError_t err;
 
-    //malloc on the GPU
+    //malloc space on the on the GPU
     err=cudaMalloc(&device_data, blob_bytes(img));
 
     //check for errors (NOTE: this is not a standard cuda function. Check logging.h)
     cudaCheckError(err)
 
-    //copy the data over to the GPU
+    //copy the image data over to the GPU
     cudaCheckError(cudaMemcpy(device_data, img->data, blob_bytes(img), cudaMemcpyHostToDevice));
+#else
+    //For your convenience a helper function is defined in blob.h which can take care of the allocation and memcpy of blobs
+    blob2gpu(device_data, img);
+#endif
 
     //Perform the preprocessing on the GPU
     info("Preprocessing on GPU...\n");
@@ -104,9 +117,14 @@ void gpu_preprocess(BLOB* img){
     //We use "peekatlasterror" since a kernel launch does not return a cudaError_t to check for errors
     cudaCheckError(cudaPeekAtLastError());
 
+#ifndef SHORTHANDS
     //copy the processed image data back from GPU global memory to CPU memory
     cudaCheckError(cudaMemcpy(img->data, device_data, blob_bytes(img), cudaMemcpyDeviceToHost));
 
     //free the allocated GPU memory for this channel
     cudaCheckError(cudaFree(device_data));
+#else
+    //again a simple shorthand to transfer a blob back from the gpu to the cpu and free the allocated memory
+    gpu2blob(img, device_data);
+#endif
 }
