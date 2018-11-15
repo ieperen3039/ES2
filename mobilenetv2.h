@@ -3,7 +3,7 @@
 #include "network.h"
 
 //list of network layers
-layer_t layers[]={
+layer_t mobilenetv2_layers[]={
 
     //data (idx=0)
         //first layer is the input image
@@ -2634,7 +2634,7 @@ layer_t layers[]={
 
 Network mobilenetv2={
     .name="MobilenetV2",
-    .layers=layers
+    .layers=mobilenetv2_layers
 };
 
 
