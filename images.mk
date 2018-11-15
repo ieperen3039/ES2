@@ -48,13 +48,13 @@ $3:$2
 $4:$3 $(EXE)
 	@echo "Evaluating image $3"
 	./$(EXE) $3 | tee $4
-	@grep -q "Detect class: $(strip $5)" $4 && echo -e "$(GREEN)correctly identified image $2$(NC)" ||  (echo -e "$(RED)Did not correctly identify image $2$(NC)"; rm -f $4; exit -1)
+	@grep -q "Detect class: $(strip $5)" $4 && echo "$(GREEN)correctly identified image $2$(NC)" ||  (echo "$(RED)Did not correctly identify image $2$(NC)"; rm -f $4; exit -1)
 
 endef
 
 #check if all images are classified correctly
 check_all: $(foreach URL, $(IMAGE_URLS), check_$(basename $(notdir $(URL))))
-	@echo -e "$(GREEN)All correct!$(NC)"
+	@echo "$(GREEN)All correct!$(NC)"
 
 #define build rules for all images
 $(foreach j,$(JOINED),$(eval $(call IMAGE_BUILD_RULES,\

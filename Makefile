@@ -28,12 +28,12 @@ include images.mk
 .PHONY:check
 check:converted_$(basename $(notdir $(word 1,$(IMAGE_URLS)))).png $(EXE)
 	./$(EXE) $< | tee $@
-	@grep -q "Detect class: $(strip $(word 1, $(CLASS_IDX)))" $@ && echo -e "$(GREEN)correctly identified image $<$(NC)" ||  echo -e "$(RED)Did not correctly identify image $<$(NC)"
+	@grep -q "Detect class: $(strip $(word 1, $(CLASS_IDX)))" $@ && echo "$(GREEN)correctly identified image $<$(NC)" ||  echo "$(RED)Did not correctly identify image $<$(NC)"
 
 #link the executable
 .PRECIOUS:$(EXE)
 $(EXE):$(OBJS)
-	$(NVCC) $^  -o $@  $(NVCCFLAGS) $(LDFLAGS) --compiler-options $(CFLAGS)
+	$(NVCC) $^  -o $@ $(NVCCFLAGS) $(LDFLAGS) --compiler-options $(CFLAGS)
 
 #compile c files
 %.o:%.c
