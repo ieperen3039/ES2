@@ -1,5 +1,6 @@
 #ifndef LOGGING_H
 #define LOGGING_H
+#include <stdio.h>
 
 //define an info function based on verbosity level
 #ifdef SILENT

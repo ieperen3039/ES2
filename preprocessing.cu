@@ -1,15 +1,15 @@
+#include "preprocessing.h"
 #include "logging.h"
-#include "image_util.h"
 
 //CPU version
-void cpu_preprocess(IMG* img){
+void cpu_preprocess(BLOB* img){
     //Subtract mean RGB values, scale with 0.017, and swap RGB->BGR
-    for(int y=0;y<img->height;y++)
-        for(int x=0;x<img->width;x++){
-            float R            = (img->data[0][y][x]-123.680f)*0.017f; //R
-            img->data[1][y][x] = (img->data[1][y][x]-116.779f)*0.017f; //G
-            img->data[0][y][x] = (img->data[2][y][x]-103.939f)*0.017f; //B
-            img->data[2][y][x] = R;
+    for(int y=0;y<img->h;y++)
+        for(int x=0;x<img->w;x++){
+            float R              =  (blob_data(img,0,y,x)-123.680f)*0.017f; //R
+            blob_data(img, 1,y,x) = (blob_data(img,1,y,x)-116.779f)*0.017f; //G
+            blob_data(img, 2,y,x) = (blob_data(img,2,y,x)-103.939f)*0.017f; //B
+            blob_data(img, 0,y,x) = R;
          }
 }
 
@@ -19,33 +19,34 @@ __global__ void gpu_device_preprocess(float* data){
     //This code gets executed by each thread in the GPU
     //First step is identifying which thread we are
 
-    // The ids of this thread within our block
+    // The ids of this thread within our block (commented here since this particular kernel doesn't need them)
     //unsigned int local_x = threadIdx.x; //x coordinate *within* the block this thread maps to
     //unsigned int local_y = threadIdx.y; //y coordinate *within* the block this thread maps to
     //unsigned int local_z = threadIdx.z; //z coordinate *within* the block this thread maps to
 
-    // The global ids
+    // The global ids (where is this thread in the total grid)
     unsigned int global_x = blockIdx.x*blockDim.x + threadIdx.x;  //blockid*width_of_a_block + local_x
     unsigned int global_y = blockIdx.y*blockDim.y + threadIdx.y;
-    //note that global_z==local_z! The grid of blocks is only 2D (x and y), so no blocks in the channel dimension!
-    unsigned int global_z = threadIdx.z;
+    unsigned int global_z = blockIdx.z*blockDim.z + threadIdx.z; //NOTE: gridDim.z==1 and thus blockIdx.z==0 in this example!
 
+    //The image height and width can be passed as an argument to this kernel, but they
+    //can also be derived by using the grid and block dimensions in this case
     unsigned int img_width  = gridDim.x*blockDim.x;
     unsigned int img_height = gridDim.y*blockDim.y;
 
     //load single pixel from global memory into register
     //HINT: the global memory is very slow, so if you have multiple uses of the same pixel, it might be smart to look into the "shared memory".
     //Here however there is only one use of each pixel, so nothing to be gained from using shared memory
-    float value = data[global_z*img_height*img_width+ global_y*img_width + global_x];
+    float value = data[ global_z*img_height*img_width + global_y*img_width + global_x];
 
-    //each channel (Z) needs to correct with a different value
+    //each channel (Z) needs to correct with a different mean value
     float mean[3]={
         123.680f,
         116.779f,
         103.939f
     };
 
-    //correct by subtracting the correct mean for this channel and scaling by the factor 0.017
+    //correct by subtracting the correct mean for this channel and scaling by a factor 0.017
     value= (value-mean[global_z]) * 0.017f;
 
     //time to commit the value to the global memory
@@ -54,7 +55,7 @@ __global__ void gpu_device_preprocess(float* data){
 }
 
 //GPU host code (called from the CPU, copies data back and forth and launched the GPU thread)
-void gpu_preprocess(IMG* img){
+void gpu_preprocess(BLOB* img){
 
     //GPU code
 
@@ -68,8 +69,8 @@ void gpu_preprocess(IMG* img){
     //let's decide on a number of blocks per channel
     int numBlocksX=16;
     int numBlocksY=16;
-    int threadsPerBlockX=img->width/numBlocksX;  //NOTE: this should have remainder==0 !!
-    int threadsPerBlockY=img->height/numBlocksY; //NOTE: this should have remainder==0 !!
+    int threadsPerBlockX=img->w/numBlocksX;  //NOTE: this should have remainder==0 !!
+    int threadsPerBlockY=img->h/numBlocksY; //NOTE: this should have remainder==0 !!
 
 
     info("Grid dimensions %d x %d (x 1)\n", numBlocksX,numBlocksY);
@@ -88,16 +89,13 @@ void gpu_preprocess(IMG* img){
     cudaError_t err;
 
     //malloc on the GPU
-    err=cudaMalloc(&device_data, 3*img->width*img->height*sizeof(float));
+    err=cudaMalloc(&device_data, blob_bytes(img));
 
     //check for errors (NOTE: this is not a standard cuda function. Check logging.h)
     cudaCheckError(err)
 
     //copy the data over to the GPU
-    for(int c=0;c<3;c++){
-        for(int y=0;y<img->height;y++)
-            cudaCheckError(cudaMemcpy(&(device_data[c*img->width*img->height + y*img->width]), img->data[c][y],img->width*sizeof(float), cudaMemcpyHostToDevice));
-    }
+    cudaCheckError(cudaMemcpy(device_data, img->data, blob_bytes(img), cudaMemcpyHostToDevice));
 
     //Perform the preprocessing on the GPU
     info("Preprocessing on GPU...\n");
@@ -106,14 +104,8 @@ void gpu_preprocess(IMG* img){
     //We use "peekatlasterror" since a kernel launch does not return a cudaError_t to check for errors
     cudaCheckError(cudaPeekAtLastError());
 
-    cudaDeviceSynchronize();
-
     //copy the processed image data back from GPU global memory to CPU memory
-    for(int c=0;c<3;c++){
-        for(int y=0;y<img->height;y++)
-            cudaCheckError(cudaMemcpy(img->data[c][y], &(device_data[c*img->height*img->width + y*img->width]), img->width*sizeof(float), cudaMemcpyDeviceToHost));
-
-    }
+    cudaCheckError(cudaMemcpy(img->data, device_data, blob_bytes(img), cudaMemcpyDeviceToHost));
 
     //free the allocated GPU memory for this channel
     cudaCheckError(cudaFree(device_data));

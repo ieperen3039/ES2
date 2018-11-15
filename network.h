@@ -33,6 +33,6 @@ typedef struct{
 }Network;
 
 //inference on network
-BLOB* network(Network* net, IMG* img);
+BLOB* network(Network* net, BLOB* input);
 
 #endif

@@ -30,7 +30,7 @@ int main(int argc, char* argv[]){
 
     //read png into image structure
     info("Loading image %s\n",argv[1]);
-    IMG* img = read_png(argv[1]);
+    BLOB* img = read_png(argv[1]);
 
     //Do preprocessing of the image
     info("Preprocessing image\n");
@@ -71,8 +71,8 @@ int main(int argc, char* argv[]){
     //cleanup output
     blob_free(out);
 
-    //cleanup image
-    destroy_img(img);
+    //cleanup input image
+    blob_free(img);
 
     return 0;
 }
