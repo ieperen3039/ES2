@@ -17,11 +17,21 @@ static const char* layer_type_str[4] ={
 BLOB* network(Network* net, IMG* img){
 
     //convert image to blob structure
-    BLOB* input = (BLOB*) malloc(sizeof(BLOB));
-    input->data = img->data;
-    input->w    = img->width;
-    input->h    = img->height;
-    input->d    = img->channels;
+    //BLOB* input = (BLOB*) malloc(sizeof(BLOB));
+    //input->data = img->data;
+    //input->w    = img->width;
+    //input->h    = img->height;
+    //input->d    = img->channels;
+    BLOB* input = blob_alloc(img->channels, img->height, img->width);
+    for(int o=0;o<input->d;o++)
+        for(int m=0;m<input->h;m++)
+            for(int n=0;n<input->w;n++)
+                blob_data(input,o,m,n)=img->data[o][m][n];
+
+    #ifdef DEBUG
+    //store input data for comparison with reference
+    blob_write_txt("data.txt", input);
+    #endif //DEBUG
 
     //get number of layers in the network
     int num_layers=0;
@@ -84,10 +94,10 @@ BLOB* network(Network* net, IMG* img){
         #ifdef DEBUG
         if(out){
             // Some example on how to use the blob IO routines
-            // CAn be very useful to debug problems in the output of your network
+            // Can be very useful to debug problems in the output of your network
 
             //create a name for the output file
-            char* fname = (char*) malloc(sizeof(char)*strlen(layer.name)+4);
+            char* fname = (char*) malloc(sizeof(char)*strlen(layer.name)+5);
             sprintf(fname, "%s.txt", layer.name);
 
             //write to file
@@ -108,7 +118,7 @@ BLOB* network(Network* net, IMG* img){
 
     //clean up all intermediate blobs
     for(int i=1;i<num_layers-2;i++)
-        free_blob(layer_blobs[i]);
+        blob_free(layer_blobs[i]);
 
     //free the input blob pointer
     free(input);

@@ -15,7 +15,7 @@ void cpu_preprocess(IMG* img){
 
 
 //GPU device code (what the threads execute)
-__global__ void gpu_device_preprocess(float* data, int img_width, int img_height){
+__global__ void gpu_device_preprocess(float* data){
     //This code gets executed by each thread in the GPU
     //First step is identifying which thread we are
 
@@ -30,11 +30,13 @@ __global__ void gpu_device_preprocess(float* data, int img_width, int img_height
     //note that global_z==local_z! The grid of blocks is only 2D (x and y), so no blocks in the channel dimension!
     unsigned int global_z = threadIdx.z;
 
+    unsigned int img_width  = gridDim.x*blockDim.x;
+    unsigned int img_height = gridDim.y*blockDim.y;
 
     //load single pixel from global memory into register
     //HINT: the global memory is very slow, so if you have multiple uses of the same pixel, it might be smart to look into the "shared memory".
     //Here however there is only one use of each pixel, so nothing to be gained from using shared memory
-    float value = data[global_z*img_width*img_height + global_y*img_width + global_x];
+    float value = data[global_z*img_height*img_width+ global_y*img_width + global_x];
 
     //each channel (Z) needs to correct with a different value
     float mean[3]={
@@ -99,10 +101,12 @@ void gpu_preprocess(IMG* img){
 
     //Perform the preprocessing on the GPU
     info("Preprocessing on GPU...\n");
-    gpu_device_preprocess<<< grid, block >>>(device_data, img->width, img->height);
+    gpu_device_preprocess<<< grid, block >>>(device_data);
 
     //We use "peekatlasterror" since a kernel launch does not return a cudaError_t to check for errors
     cudaCheckError(cudaPeekAtLastError());
+
+    cudaDeviceSynchronize();
 
     //copy the processed image data back from GPU global memory to CPU memory
     for(int c=0;c<3;c++){

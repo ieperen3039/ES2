@@ -1,31 +1,40 @@
 #ifndef BLOB_H
 #define BLOB_H
 
+//access element of blob
+#define blob_data(blob,z,y,x) blob->data[(z)*(blob)->h*(blob)->w + (y)*(blob)->w + (x)]
+
+//number elements in blob
+#define blob_size(blob)   ((blob)->w*(blob)->h*(blob)->d)
+
+//number of bytes in blob
+#define blob_bytes(blob)  (blob_size(blob)*sizeof(float))
+
+//free blob
+#define blob_free(blob)   {free((blob)->data); free(blob);}
+
 //Basic blob datastructure
 typedef struct {
-    float*** data;
+    float* data;
     int w; //width
     int h; //height
     int d; //depth
 } BLOB;
 
 //malloc blob with given dimensions (zero init)
-BLOB* alloc_blob(int d, int h, int w);
+BLOB* blob_alloc(int d, int h, int w);
 
 //calloc blob with given dimensions (zero init)
-BLOB* calloc_blob(int d, int h, int w);
-
-//free blob
-void free_blob(BLOB* b);
+BLOB* blob_calloc(int d, int h, int w);
 
 //duplicate blob
-BLOB* duplicate_blob(BLOB* b);
+BLOB* blob_duplicate(BLOB* b);
 
 //write blob to text file
-void blob_write_txt(const char* fname, BLOB* b);
+void  blob_write_txt(const char* fname, BLOB* b);
 
 //write blob to binary file
-void blob_write_bin(const char* fname, BLOB* b);
+void  blob_write_bin(const char* fname, BLOB* b);
 
 //load blob from text file
 BLOB* blob_read_txt(const char* fname);

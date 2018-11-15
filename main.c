@@ -9,11 +9,11 @@
 
 int argmax(BLOB* b){
     //find index of channel that is maximum
-    float m=b->data[0][0][0];
+    float m=b->data[0];
     int i=0;
     for(int z=1;z<b->d;z++)
-        if(b->data[z][0][0] > m ){
-            m=b->data[z][0][0];
+        if(b->data[z] > m ){
+            m=b->data[z];
             i=z;
         }
     return i;
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]){
     }
 
     //cleanup output
-    free_blob(out);
+    blob_free(out);
 
     //cleanup image
     destroy_img(img);

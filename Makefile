@@ -8,10 +8,13 @@ LDFLAGS+= -lpng -lm
 
 #pass some flags through to gcc when defined
 ifdef DEBUG
-CFLAGS+= -DDEBUG
+CFLAGS+= -DDEBUG -g
 endif
 ifdef SILENT
 CFLAGS+= -DSILENT
+endif
+ifdef CPU
+CFLAGS+= -DCPU_ONLY
 endif
 
 CUSRCS=$(wildcard *.cu)

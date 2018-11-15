@@ -7,28 +7,26 @@
 BLOB* eltwise(BLOB** in_arr, eltwise_param_t* p){
 
     //copy first input layer
-    BLOB* out=duplicate_blob(in_arr[0]);
+    BLOB* out=blob_duplicate(in_arr[0]);
 
     //loop over output elements
-    for(int o=0;o<out->d;o++)
-        for(int m=0;m<out->h;m++)
-            for(int n=0;n<out->w;n++)
-                //reduce all remaining blobs
-                for(int i=1;in_arr[i]!=NULL;i++)
-                    switch(p->type){
+    for(int i=0;i<blob_size(out);i++)
+        //reduce all remaining blobs
+        for(int j=1;in_arr[j]!=NULL;j++)
+            switch(p->type){
 
-                        case EW_SUM:
-                            out->data[o][m][n]+=in_arr[i]->data[o][m][n];
-                        break;
+                case EW_SUM:
+                    out->data[i]+=in_arr[j]->data[i];
+                break;
 
-                        case EW_PROD:
-                            out->data[o][m][n]*=in_arr[i]->data[o][m][n];
-                        break;
+                case EW_PROD:
+                    out->data[i]*=in_arr[j]->data[i];
+                break;
 
-                        case EW_MAX:
-                            out->data[o][m][n]=fmax(out->data[o][m][n], in_arr[i]->data[o][m][n]);
-                        break;
-                    }
+                case EW_MAX:
+                    out->data[i]=fmax(out->data[i],in_arr[j]->data[i]);
+                break;
+            }
 
     //return output
     return out;

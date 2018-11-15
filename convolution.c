@@ -8,13 +8,13 @@
 BLOB* pad(BLOB* in, int pad){
 
     //create output blob
-    BLOB* out = calloc_blob(in->d, in->h+2*pad, in->w+pad*2);
+    BLOB* out = blob_calloc(in->d, in->h+2*pad, in->w+pad*2);
 
     //copy non-padded input into output blob
     for(int z=0;z<in->d;z++)
        for(int y=0;y<in->h;y++)
           for(int x=0;x<in->w;x++)
-              out->data[z][y+pad][x+pad]=in->data[z][y][x];
+              blob_data(out,z,y+pad,x+pad)= blob_data(in,z,y,x);
 
     //return pointer to padded blob
     return out;
@@ -33,13 +33,14 @@ BLOB* load_weights(BLOB* b, conv_param_t* p){
     int Kx=(p->fc)?b->w:p->Kx;
 
     //allocate 3D blob, and emulate 4D in KxKy later
-    BLOB* w=alloc_blob(p->num_out, b->d, Ky*Kx);
+    BLOB* w=blob_alloc(p->num_out, b->d/p->group, Ky*Kx);
 
     //fill 4D weight structure
     for(int g=0;g<p->group;g++)
         for(int o=g*(p->num_out/p->group);o<(g+1)*(p->num_out/p->group);o++)
             for(int i=g*(b->d/p->group);i<(g+1)*(b->d/p->group);i++)
-                if((int)fread(w->data[o][i],sizeof(float),Ky*Kx, fp)!=Ky*Kx)
+                //note: each output map has only  b->d/p->group input maps. Hence the absolute index of i is subtracted when storing in w!
+                if((int)fread( &(blob_data(w,o,i-g*(b->d/p->group),0)),sizeof(float),Ky*Kx, fp)!=Ky*Kx)
                     error("loading weights from file %s\n", p->weights);
 
     //close file
@@ -77,6 +78,7 @@ BLOB* convolution(BLOB* input, conv_param_t* p){
     if(p->pad!=0)
         in = pad(in, p->pad);
 
+
     //create blob to hold output
     int height=(int)floor(((float)in->h - (float)p->Ky)/(float)p->Sy)+1;
     int width =(int)floor(((float)in->w - (float)p->Kx)/(float)p->Sx)+1;
@@ -85,10 +87,10 @@ BLOB* convolution(BLOB* input, conv_param_t* p){
     //load bias if required
     if(p->bias==NULL){
         //zero init
-        out = calloc_blob(p->num_out, height, width);
+        out = blob_calloc(p->num_out, height, width);
     }else{
         //not required to calloc
-        out = alloc_blob(p->num_out, height, width);
+        out = blob_alloc(p->num_out, height, width);
 
         //load bias values from file
         float* bias =load_1d(p->bias, p->num_out);
@@ -97,7 +99,7 @@ BLOB* convolution(BLOB* input, conv_param_t* p){
         for(int o=0;o<out->d;o++)
             for(int m=0;m<out->h;m++)
                 for(int n=0;n<out->w;n++)
-                    out->data[o][m][n]=bias[o];
+                    blob_data(out,o,m,n)=bias[o];
 
         //cleanup bias
         free(bias);
@@ -118,17 +120,20 @@ BLOB* convolution(BLOB* input, conv_param_t* p){
                     for(int n=0;n<out->w;n++)
                         for(int k=0;k<Ky;k++)
                             for(int l=0;l<Kx;l++)
-                                out->data[o][m][n]+=in->data[i][m*p->Sy+k][n*p->Sx+l]*w->data[o][i][k*Kx+l];
+                                //note: absolute starting i is subtracted for the weights, see load_weights function for more info
+                                blob_data(out,o,m,n)+=blob_data(in, i, m*p->Sy+k, n*p->Sx+l) * blob_data(w, o, i-(g*(in->d/p->group)), k*Kx + l);
 
     //free weights
-    free_blob(w);
+    blob_free(w);
 
     //done with padded blob, free
     if(p->pad!=0)
-        free_blob(in);
+        blob_free(in);
 
     //perform batchnorm if needed
     if(p->bn_mean!=NULL){
+
+
         //load batchnorm mean and variance
         float* mean = load_1d(p->bn_mean, out->d);
         float* var  = load_1d(p->bn_var, out->d);
@@ -137,7 +142,7 @@ BLOB* convolution(BLOB* input, conv_param_t* p){
         for(int o=0;o<out->d;o++)
             for(int m=0;m<out->h;m++)
                 for(int n=0;n<out->w;n++)
-                    out->data[o][m][n]= (out->data[o][m][n] - mean[o])/sqrtf(var[o]+p->bn_eps);
+                    blob_data(out,o,m,n)= (blob_data(out,o,m,n) - mean[o])/sqrtf(var[o]+p->bn_eps);
 
         //free mean and variance
         free(mean);
@@ -154,7 +159,7 @@ BLOB* convolution(BLOB* input, conv_param_t* p){
         for(int o=0;o<out->d;o++)
             for(int m=0;m<out->h;m++)
                 for(int n=0;n<out->w;n++)
-                    out->data[o][m][n] = out->data[o][m][n]*scale[o] + scale_bias[o];
+                    blob_data(out,o,m,n) = blob_data(out,o,m,n)*scale[o] + scale_bias[o];
 
         //free parameters
         free(scale);
@@ -162,12 +167,9 @@ BLOB* convolution(BLOB* input, conv_param_t* p){
     }
 
     //perform relu
-    if(p->relu==true){
-        for(int o=0;o<out->d;o++)
-            for(int m=0;m<out->h;m++)
-                for(int n=0;n<out->w;n++)
-                    out->data[o][m][n] =  fmax(0.0f, out->data[o][m][n]);
-    }
+    if(p->relu==true)
+        for(int i=0;i<blob_size(out); i++)
+            out->data[i] =  fmax(0.0f, out->data[i]);
 
     //return output
     return out;
