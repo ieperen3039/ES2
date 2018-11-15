@@ -15,7 +15,8 @@ Network mobilenetv2={
             .name="conv1",
             .type=CONVOLUTION,
             .input=0,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=32,
 
@@ -53,15 +54,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv1
-
 
         { //conv2_1_expand (idx=2)
             .name="conv2_1_expand",
             .type=CONVOLUTION,
             .input=1,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=32,
 
@@ -99,14 +100,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv2_1_expand
 
         { //conv2_1_dwise (idx=3)
             .name="conv2_1_dwise",
             .type=CONVOLUTION,
             .input=2,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=32,
 
@@ -144,14 +146,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv2_1_dwise
 
         { //conv2_1_linear (idx=4)
             .name="conv2_1_linear",
             .type=CONVOLUTION,
             .input=3,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=16,
 
@@ -189,7 +192,7 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv2_1_linear
 
 
@@ -197,7 +200,8 @@ Network mobilenetv2={
             .name="conv2_2_expand",
             .type=CONVOLUTION,
             .input=4,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=96,
 
@@ -235,14 +239,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv2_2_expand
 
         { //conv2_2_dwise (idx=6)
             .name="conv2_2_dwise",
             .type=CONVOLUTION,
             .input=5,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=96,
 
@@ -280,14 +285,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv2_2_dwise
 
         { //conv2_2_linear (idx=7)
             .name="conv2_2_linear",
             .type=CONVOLUTION,
             .input=6,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=24,
 
@@ -325,7 +331,7 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv2_2_linear
 
 
@@ -333,7 +339,8 @@ Network mobilenetv2={
             .name="conv3_1_expand",
             .type=CONVOLUTION,
             .input=7,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=144,
 
@@ -371,14 +378,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv3_1_expand
 
         { //conv3_1_dwise (idx=9)
             .name="conv3_1_dwise",
             .type=CONVOLUTION,
             .input=8,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=144,
 
@@ -416,14 +424,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv3_1_dwise
 
         { //conv3_1_linear (idx=10)
             .name="conv3_1_linear",
             .type=CONVOLUTION,
             .input=9,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=24,
 
@@ -461,7 +470,7 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv3_1_linear
 
 
@@ -470,16 +479,17 @@ Network mobilenetv2={
             .type=ELTWISE,
             .input=10,
             .input2=7,
-            .param.eltwise={
+            .param = { .eltwise = {
                 .type=EW_SUM
-           }
+           }}
         },//end of block3_1
 
         { //conv3_2_expand (idx=12)
             .name="conv3_2_expand",
             .type=CONVOLUTION,
             .input=11,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=144,
 
@@ -517,14 +527,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv3_2_expand
 
         { //conv3_2_dwise (idx=13)
             .name="conv3_2_dwise",
             .type=CONVOLUTION,
             .input=12,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=144,
 
@@ -562,14 +573,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv3_2_dwise
 
         { //conv3_2_linear (idx=14)
             .name="conv3_2_linear",
             .type=CONVOLUTION,
             .input=13,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=32,
 
@@ -607,7 +619,7 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv3_2_linear
 
 
@@ -615,7 +627,8 @@ Network mobilenetv2={
             .name="conv4_1_expand",
             .type=CONVOLUTION,
             .input=14,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=192,
 
@@ -653,14 +666,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_1_expand
 
         { //conv4_1_dwise (idx=16)
             .name="conv4_1_dwise",
             .type=CONVOLUTION,
             .input=15,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=192,
 
@@ -698,14 +712,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_1_dwise
 
         { //conv4_1_linear (idx=17)
             .name="conv4_1_linear",
             .type=CONVOLUTION,
             .input=16,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=32,
 
@@ -743,7 +758,7 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_1_linear
 
         { //block4_1 (idx=18)
@@ -751,16 +766,17 @@ Network mobilenetv2={
             .type=ELTWISE,
             .input=17,
             .input2=14,
-            .param.eltwise={
+            .param = { .eltwise = {
                 .type=EW_SUM
-           }
+           }}
         },//end of block4_1
 
         { //conv4_2_expand (idx=19)
             .name="conv4_2_expand",
             .type=CONVOLUTION,
             .input=18,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=192,
 
@@ -798,14 +814,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_2_expand
 
         { //conv4_2_dwise (idx=20)
             .name="conv4_2_dwise",
             .type=CONVOLUTION,
             .input=19,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=192,
 
@@ -843,14 +860,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_2_dwise
 
         { //conv4_2_linear (idx=21)
             .name="conv4_2_linear",
             .type=CONVOLUTION,
             .input=20,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=32,
 
@@ -888,7 +906,7 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_2_linear
 
         { //block4_2 (idx=22)
@@ -896,9 +914,9 @@ Network mobilenetv2={
             .type=ELTWISE,
             .input=21,
             .input2=18,
-            .param.eltwise={
+            .param = { .eltwise = {
                 .type=EW_SUM
-           }
+           }}
         },//end of block4_2
 
 
@@ -906,7 +924,8 @@ Network mobilenetv2={
             .name="conv4_3_expand",
             .type=CONVOLUTION,
             .input=22,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=192,
 
@@ -944,14 +963,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_3_expand
 
         { //conv4_3_dwise (idx=24)
             .name="conv4_3_dwise",
             .type=CONVOLUTION,
             .input=23,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=192,
 
@@ -989,14 +1009,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_3_dwise
 
         { //conv4_3_linear (idx=25)
             .name="conv4_3_linear",
             .type=CONVOLUTION,
             .input=24,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=64,
 
@@ -1034,7 +1055,7 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_3_linear
 
 
@@ -1042,7 +1063,8 @@ Network mobilenetv2={
             .name="conv4_4_expand",
             .type=CONVOLUTION,
             .input=25,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=384,
 
@@ -1080,14 +1102,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_4_expand
 
         { //conv4_4_dwise (idx=27)
             .name="conv4_4_dwise",
             .type=CONVOLUTION,
             .input=26,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=384,
 
@@ -1125,14 +1148,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_4_dwise
 
         { //conv4_4_linear (idx=28)
             .name="conv4_4_linear",
             .type=CONVOLUTION,
             .input=27,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=64,
 
@@ -1170,7 +1194,7 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_4_linear
 
         { //block4_4 (idx=29)
@@ -1178,9 +1202,9 @@ Network mobilenetv2={
             .type=ELTWISE,
             .input=28,
             .input2=25,
-            .param.eltwise={
+            .param = { .eltwise = {
                 .type=EW_SUM
-           }
+           }}
         },//end of block4_4
 
 
@@ -1188,7 +1212,8 @@ Network mobilenetv2={
             .name="conv4_5_expand",
             .type=CONVOLUTION,
             .input=29,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=384,
 
@@ -1226,14 +1251,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_5_expand
 
         { //conv4_5_dwise (idx=31)
             .name="conv4_5_dwise",
             .type=CONVOLUTION,
             .input=30,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=384,
 
@@ -1271,14 +1297,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_5_dwise
 
         { //conv4_5_linear (idx=32)
             .name="conv4_5_linear",
             .type=CONVOLUTION,
             .input=31,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=64,
 
@@ -1316,7 +1343,7 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_5_linear
 
         { //block4_5 (idx=33)
@@ -1324,9 +1351,9 @@ Network mobilenetv2={
             .type=ELTWISE,
             .input=32,
             .input2=29,
-            .param.eltwise={
+            .param = { .eltwise = {
                 .type=EW_SUM
-           }
+           }}
         },//end of block4_5
 
 
@@ -1334,7 +1361,8 @@ Network mobilenetv2={
             .name="conv4_6_expand",
             .type=CONVOLUTION,
             .input=33,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=384,
 
@@ -1372,14 +1400,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_6_expand
 
         { //conv4_6_dwise (idx=35)
             .name="conv4_6_dwise",
             .type=CONVOLUTION,
             .input=34,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=384,
 
@@ -1417,14 +1446,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_6_dwise
 
         { //conv4_6_linear (idx=36)
             .name="conv4_6_linear",
             .type=CONVOLUTION,
             .input=35,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=64,
 
@@ -1462,7 +1492,7 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_6_linear
 
         { //block4_6 (idx=37)
@@ -1470,16 +1500,17 @@ Network mobilenetv2={
             .type=ELTWISE,
             .input=36,
             .input2=33,
-            .param.eltwise={
+            .param = { .eltwise = {
                 .type=EW_SUM
-           }
+           }}
         },//end of block4_6
 
         { //conv4_7_expand (idx=38)
             .name="conv4_7_expand",
             .type=CONVOLUTION,
             .input=37,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=384,
 
@@ -1517,14 +1548,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_7_expand
 
         { //conv4_7_dwise (idx=39)
             .name="conv4_7_dwise",
             .type=CONVOLUTION,
             .input=38,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=384,
 
@@ -1562,14 +1594,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_7_dwise
 
         { //conv4_7_linear (idx=40)
             .name="conv4_7_linear",
             .type=CONVOLUTION,
             .input=39,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=96,
 
@@ -1607,14 +1640,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv4_7_linear
 
         { //conv5_1_expand (idx=41)
             .name="conv5_1_expand",
             .type=CONVOLUTION,
             .input=40,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=576,
 
@@ -1652,14 +1686,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv5_1_expand
 
         { //conv5_1_dwise (idx=42)
             .name="conv5_1_dwise",
             .type=CONVOLUTION,
             .input=41,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=576,
 
@@ -1697,14 +1732,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv5_1_dwise
 
         { //conv5_1_linear (idx=43)
             .name="conv5_1_linear",
             .type=CONVOLUTION,
             .input=42,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=96,
 
@@ -1742,7 +1778,7 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv5_1_linear
 
 
@@ -1752,17 +1788,17 @@ Network mobilenetv2={
             .type=ELTWISE,
             .input=43,
             .input2=40,
-            .param.eltwise={
+            .param = { .eltwise = {
                 .type=EW_SUM
-           }
+           }}
         },//end of block5_1
-
 
         { //conv5_2_expand (idx=45)
             .name="conv5_2_expand",
             .type=CONVOLUTION,
             .input=44,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=576,
 
@@ -1800,14 +1836,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv5_2_expand
 
         { //conv5_2_dwise (idx=46)
             .name="conv5_2_dwise",
             .type=CONVOLUTION,
             .input=45,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=576,
 
@@ -1845,14 +1882,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv5_2_dwise
 
         { //conv5_2_linear (idx=47)
             .name="conv5_2_linear",
             .type=CONVOLUTION,
             .input=46,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=96,
 
@@ -1890,7 +1928,7 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv5_2_linear
 
         { //block5_2 (idx=48)
@@ -1898,16 +1936,17 @@ Network mobilenetv2={
             .type=ELTWISE,
             .input=47,
             .input2=44,
-            .param.eltwise={
+            .param = { .eltwise = {
                 .type=EW_SUM
-           }
+           }}
         },//end of block5_2
 
         { //conv5_3_expand (idx=49)
             .name="conv5_3_expand",
             .type=CONVOLUTION,
             .input=48,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=576,
 
@@ -1945,14 +1984,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv5_3_expand
 
         { //conv5_3_dwise (idx=50)
             .name="conv5_3_dwise",
             .type=CONVOLUTION,
             .input=49,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=576,
 
@@ -1990,14 +2030,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv5_3_dwise
 
         { //conv5_3_linear (idx=51)
             .name="conv5_3_linear",
             .type=CONVOLUTION,
             .input=50,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=160,
 
@@ -2035,14 +2076,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv5_3_linear
 
         { //conv6_1_expand (idx=52)
             .name="conv6_1_expand",
             .type=CONVOLUTION,
             .input=51,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=960,
 
@@ -2080,14 +2122,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv6_1_expand
 
         { //conv6_1_dwise (idx=53)
             .name="conv6_1_dwise",
             .type=CONVOLUTION,
             .input=52,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=960,
 
@@ -2125,14 +2168,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv6_1_dwise
 
         { //conv6_1_linear (idx=54)
             .name="conv6_1_linear",
             .type=CONVOLUTION,
             .input=53,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=160,
 
@@ -2170,7 +2214,7 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv6_1_linear
 
 
@@ -2180,9 +2224,9 @@ Network mobilenetv2={
             .type=ELTWISE,
             .input=54,
             .input2=51,
-            .param.eltwise={
+            .param = { .eltwise = {
                 .type=EW_SUM
-           }
+           }}
         },//end of block6_1
 
 
@@ -2190,7 +2234,8 @@ Network mobilenetv2={
             .name="conv6_2_expand",
             .type=CONVOLUTION,
             .input=55,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=960,
 
@@ -2228,14 +2273,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv6_2_expand
 
         { //conv6_2_dwise (idx=57)
             .name="conv6_2_dwise",
             .type=CONVOLUTION,
             .input=56,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=960,
 
@@ -2273,14 +2319,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv6_2_dwise
 
         { //conv6_2_linear (idx=58)
             .name="conv6_2_linear",
             .type=CONVOLUTION,
             .input=57,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=160,
 
@@ -2318,7 +2365,7 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv6_2_linear
 
         { //block6_2 (idx=59)
@@ -2326,16 +2373,17 @@ Network mobilenetv2={
             .type=ELTWISE,
             .input=58,
             .input2=55,
-            .param.eltwise={
+            .param = { .eltwise = {
                 .type=EW_SUM
-           }
+           }}
         },//end of block6_2
 
         { //conv6_3_expand (idx=60)
             .name="conv6_3_expand",
             .type=CONVOLUTION,
             .input=59,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=960,
 
@@ -2373,14 +2421,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv6_3_expand
 
         { //conv6_3_dwise (idx=61)
             .name="conv6_3_dwise",
             .type=CONVOLUTION,
             .input=60,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=960,
 
@@ -2418,14 +2467,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv6_3_dwise
 
         { //conv6_3_linear (idx=62)
             .name="conv6_3_linear",
             .type=CONVOLUTION,
             .input=61,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=320,
 
@@ -2463,15 +2513,15 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv6_3_linear
-
 
         { //conv6_4 (idx=63)
             .name="conv6_4",
             .type=CONVOLUTION,
             .input=62,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=1280,
 
@@ -2509,22 +2559,22 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=false
-           }
+           }}
         },//end of conv6_4
-
 
         { //pool6 (idx=64)
             .name="pool6",
             .type=POOLING,
             .input=63,
-            .param.pool={
+            .input2=-1,
+            .param={ .pool={
                 .type=POOL_AVG,
                 .global=true,
+                .Kx=-1,
+                .Ky=-1,
                 .Sx=1,
                 .Sy=1,
-                .Kx=-1,
-                .Ky=-1
-            }
+            }}
         },//end of pool6
 
 
@@ -2532,7 +2582,8 @@ Network mobilenetv2={
             .name="fc7",
             .type=CONVOLUTION,
             .input=64,
-            .param.conv={
+            .input2=-1,
+            .param = { .conv = {
                 //number of output feature maps
                 .num_out=1000,
 
@@ -2570,13 +2621,16 @@ Network mobilenetv2={
 
                 //fully connected
                 .fc=true
-            }
+            }}
         },//end of pool6
-
 
         {
             //last layer indicator
-            .type=NONE
+            .name=NULL,
+            .type=NONE,
+            .input=-1,
+            .input2=-1,
+            .param = { .eltwise = { .type = EW_SUM  }}
         }
 
     } //end of layers

@@ -158,7 +158,7 @@ BLOB* blob_read_bin(const char* fname){
     //read out raw float data
     for(int o=0;o<b->d;o++)
         for(int m=0;m<b->h;m++)
-            if(fread(b->data[o][m], sizeof(float), b->w, fp)!=b->w)
+            if((int)fread(b->data[o][m], sizeof(float), b->w, fp)!=b->w)
                 error("reading float data from %s\n",fname);
 
     //close the file

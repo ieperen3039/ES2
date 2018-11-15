@@ -22,14 +22,14 @@ typedef enum{
 typedef struct{
     const char* name;
     layer_type type;
-    layer_param_t param;
     int input;
     int input2;
+    layer_param_t param;
 }layer_t;
 
 typedef struct{
     const char* name;
-    layer_t layers[];
+    layer_t layers[66]; //note: in gcc this size is NOT required, but g++ does require it. bit of a shame
 }Network;
 
 //inference on network

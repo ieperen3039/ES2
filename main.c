@@ -5,17 +5,7 @@
 #include "network.h"
 #include "mobilenetv2.h"
 #include "logging.h"
-
-void preprocess(IMG* img){
-    //Subtract mean RGB values, scale with 0.017, and swap RGB->BGR
-    for(int y=0;y<img->height;y++)
-        for(int x=0;x<img->width;x++){
-            float R            = (img->data[0][y][x]-123.680f)*0.017f; //R
-            img->data[1][y][x] = (img->data[1][y][x]-116.779f)*0.017f; //G
-            img->data[0][y][x] = (img->data[2][y][x]-103.939f)*0.017f; //B
-            img->data[2][y][x] = R;
-         }
-}
+#include "preprocessing.h"
 
 int argmax(BLOB* b){
     //find index of channel that is maximum
@@ -44,7 +34,7 @@ int main(int argc, char* argv[]){
 
     //Do preprocessing of the image
     info("Preprocessing image\n");
-    preprocess(img);
+    cpu_preprocess(img);
 
     //perform inference
     info("Performing inference\n");

@@ -39,7 +39,7 @@ BLOB* load_weights(BLOB* b, conv_param_t* p){
     for(int g=0;g<p->group;g++)
         for(int o=g*(p->num_out/p->group);o<(g+1)*(p->num_out/p->group);o++)
             for(int i=g*(b->d/p->group);i<(g+1)*(b->d/p->group);i++)
-                if(fread(w->data[o][i],sizeof(float),Ky*Kx, fp)!=Ky*Kx)
+                if((int)fread(w->data[o][i],sizeof(float),Ky*Kx, fp)!=Ky*Kx)
                     error("loading weights from file %s\n", p->weights);
 
     //close file
