@@ -21,7 +21,7 @@ BLOB* network(Network* net, BLOB* input){
     while(net->layers[num_layers].type!=NONE) num_layers++;
 
     //create placeholder for all layer blobs
-    BLOB** layer_blobs=(BLOB**)malloc(sizeof(BLOB*)*num_layers+1);
+    BLOB** layer_blobs=(BLOB**)malloc(sizeof(BLOB*)*(num_layers+1));
 
     //insert input layer
     layer_blobs[0]=input;
@@ -72,7 +72,8 @@ BLOB* network(Network* net, BLOB* input){
         //store out in the blob holding structure to be used by future layers
         //NOTE: currently all blobs are stored until the network is fully evaluated,
         //with smarter management this storage could be reduced significantly
-        layer_blobs[l+1]=out;
+        if(out!=NULL)
+            layer_blobs[l+1]=out;
 
         #ifdef DEBUG
         if(out){
@@ -99,12 +100,12 @@ BLOB* network(Network* net, BLOB* input){
     }
     //done evaluating the network
 
-    //clean up all intermediate blobs
-    for(int i=1;i<num_layers-2;i++)
-        blob_free(layer_blobs[i]);
-
     //extract output blob pointer
     BLOB* out = layer_blobs[num_layers];
+
+    //clean up all intermediate blobs
+    for(int i=1;i<num_layers;i++)
+        blob_free(layer_blobs[i]);
 
     //clean up layer blob structure (note: only structure, data is managed by caller)
     free(layer_blobs);
