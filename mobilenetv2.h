@@ -2,2638 +2,2639 @@
 #define MOBILE_NET_V2
 #include "network.h"
 
+//list of network layers
+layer_t layers[]={
+
+    //data (idx=0)
+        //first layer is the input image
+    //end data
+
+    { //conv1 (idx=1)
+        .name="conv1",
+        .type=CONVOLUTION,
+        .input=0,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=32,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=2,
+            .Sx=2,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv1_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv1_scale.bin",
+            .scale_bias="bins/conv1_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv1_batchnorm_mean.bin",
+            .bn_var="bins/conv1_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv1
+
+    { //conv2_1_expand (idx=2)
+        .name="conv2_1_expand",
+        .type=CONVOLUTION,
+        .input=1,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=32,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv2_1_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv2_1_expand_scale.bin",
+            .scale_bias="bins/conv2_1_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv2_1_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv2_1_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv2_1_expand
+
+    { //conv2_1_dwise (idx=3)
+        .name="conv2_1_dwise",
+        .type=CONVOLUTION,
+        .input=2,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=32,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=32,
+
+            //weights
+            .weights="bins/conv2_1_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv2_1_dwise_scale.bin",
+            .scale_bias="bins/conv2_1_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv2_1_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv2_1_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv2_1_dwise
+
+    { //conv2_1_linear (idx=4)
+        .name="conv2_1_linear",
+        .type=CONVOLUTION,
+        .input=3,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=16,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv2_1_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv2_1_linear_scale.bin",
+            .scale_bias="bins/conv2_1_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv2_1_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv2_1_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv2_1_linear
+
+
+    { //conv2_2_expand (idx=5)
+        .name="conv2_2_expand",
+        .type=CONVOLUTION,
+        .input=4,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=96,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv2_2_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv2_2_expand_scale.bin",
+            .scale_bias="bins/conv2_2_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv2_2_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv2_2_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv2_2_expand
+
+    { //conv2_2_dwise (idx=6)
+        .name="conv2_2_dwise",
+        .type=CONVOLUTION,
+        .input=5,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=96,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=2,
+            .Sx=2,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=96,
+
+            //weights
+            .weights="bins/conv2_2_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv2_2_dwise_scale.bin",
+            .scale_bias="bins/conv2_2_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv2_2_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv2_2_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv2_2_dwise
+
+    { //conv2_2_linear (idx=7)
+        .name="conv2_2_linear",
+        .type=CONVOLUTION,
+        .input=6,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=24,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv2_2_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv2_2_linear_scale.bin",
+            .scale_bias="bins/conv2_2_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv2_2_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv2_2_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv2_2_linear
+
+
+    { //conv3_1_expand (idx=8)
+        .name="conv3_1_expand",
+        .type=CONVOLUTION,
+        .input=7,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=144,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv3_1_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv3_1_expand_scale.bin",
+            .scale_bias="bins/conv3_1_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv3_1_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv3_1_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv3_1_expand
+
+    { //conv3_1_dwise (idx=9)
+        .name="conv3_1_dwise",
+        .type=CONVOLUTION,
+        .input=8,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=144,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=144,
+
+            //weights
+            .weights="bins/conv3_1_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv3_1_dwise_scale.bin",
+            .scale_bias="bins/conv3_1_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv3_1_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv3_1_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv3_1_dwise
+
+    { //conv3_1_linear (idx=10)
+        .name="conv3_1_linear",
+        .type=CONVOLUTION,
+        .input=9,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=24,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv3_1_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv3_1_linear_scale.bin",
+            .scale_bias="bins/conv3_1_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv3_1_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv3_1_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv3_1_linear
+
+
+    { //block3_1 (idx=11)
+        .name="block3_1",
+        .type=ELTWISE,
+        .input=10,
+        .input2=7,
+        .param = { .eltwise = {
+            .type=EW_SUM
+       }}
+    },//end of block3_1
+
+    { //conv3_2_expand (idx=12)
+        .name="conv3_2_expand",
+        .type=CONVOLUTION,
+        .input=11,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=144,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv3_2_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv3_2_expand_scale.bin",
+            .scale_bias="bins/conv3_2_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv3_2_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv3_2_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv3_2_expand
+
+    { //conv3_2_dwise (idx=13)
+        .name="conv3_2_dwise",
+        .type=CONVOLUTION,
+        .input=12,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=144,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=2,
+            .Sx=2,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=144,
+
+            //weights
+            .weights="bins/conv3_2_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv3_2_dwise_scale.bin",
+            .scale_bias="bins/conv3_2_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv3_2_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv3_2_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv3_2_dwise
+
+    { //conv3_2_linear (idx=14)
+        .name="conv3_2_linear",
+        .type=CONVOLUTION,
+        .input=13,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=32,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv3_2_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv3_2_linear_scale.bin",
+            .scale_bias="bins/conv3_2_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv3_2_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv3_2_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv3_2_linear
+
+
+    { //conv4_1_expand (idx=15)
+        .name="conv4_1_expand",
+        .type=CONVOLUTION,
+        .input=14,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=192,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv4_1_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_1_expand_scale.bin",
+            .scale_bias="bins/conv4_1_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_1_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv4_1_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_1_expand
+
+    { //conv4_1_dwise (idx=16)
+        .name="conv4_1_dwise",
+        .type=CONVOLUTION,
+        .input=15,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=192,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=192,
+
+            //weights
+            .weights="bins/conv4_1_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_1_dwise_scale.bin",
+            .scale_bias="bins/conv4_1_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_1_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv4_1_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_1_dwise
+
+    { //conv4_1_linear (idx=17)
+        .name="conv4_1_linear",
+        .type=CONVOLUTION,
+        .input=16,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=32,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv4_1_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_1_linear_scale.bin",
+            .scale_bias="bins/conv4_1_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_1_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv4_1_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_1_linear
+
+    { //block4_1 (idx=18)
+        .name="block4_1",
+        .type=ELTWISE,
+        .input=17,
+        .input2=14,
+        .param = { .eltwise = {
+            .type=EW_SUM
+       }}
+    },//end of block4_1
+
+    { //conv4_2_expand (idx=19)
+        .name="conv4_2_expand",
+        .type=CONVOLUTION,
+        .input=18,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=192,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv4_2_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_2_expand_scale.bin",
+            .scale_bias="bins/conv4_2_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_2_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv4_2_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_2_expand
+
+    { //conv4_2_dwise (idx=20)
+        .name="conv4_2_dwise",
+        .type=CONVOLUTION,
+        .input=19,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=192,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=192,
+
+            //weights
+            .weights="bins/conv4_2_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_2_dwise_scale.bin",
+            .scale_bias="bins/conv4_2_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_2_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv4_2_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_2_dwise
+
+    { //conv4_2_linear (idx=21)
+        .name="conv4_2_linear",
+        .type=CONVOLUTION,
+        .input=20,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=32,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv4_2_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_2_linear_scale.bin",
+            .scale_bias="bins/conv4_2_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_2_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv4_2_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_2_linear
+
+    { //block4_2 (idx=22)
+        .name="block4_2",
+        .type=ELTWISE,
+        .input=21,
+        .input2=18,
+        .param = { .eltwise = {
+            .type=EW_SUM
+       }}
+    },//end of block4_2
+
+
+    { //conv4_3_expand (idx=23)
+        .name="conv4_3_expand",
+        .type=CONVOLUTION,
+        .input=22,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=192,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv4_3_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_3_expand_scale.bin",
+            .scale_bias="bins/conv4_3_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_3_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv4_3_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_3_expand
+
+    { //conv4_3_dwise (idx=24)
+        .name="conv4_3_dwise",
+        .type=CONVOLUTION,
+        .input=23,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=192,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=192,
+
+            //weights
+            .weights="bins/conv4_3_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_3_dwise_scale.bin",
+            .scale_bias="bins/conv4_3_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_3_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv4_3_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_3_dwise
+
+    { //conv4_3_linear (idx=25)
+        .name="conv4_3_linear",
+        .type=CONVOLUTION,
+        .input=24,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=64,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv4_3_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_3_linear_scale.bin",
+            .scale_bias="bins/conv4_3_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_3_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv4_3_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_3_linear
+
+
+    { //conv4_4_expand (idx=26)
+        .name="conv4_4_expand",
+        .type=CONVOLUTION,
+        .input=25,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=384,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv4_4_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_4_expand_scale.bin",
+            .scale_bias="bins/conv4_4_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_4_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv4_4_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_4_expand
+
+    { //conv4_4_dwise (idx=27)
+        .name="conv4_4_dwise",
+        .type=CONVOLUTION,
+        .input=26,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=384,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=384,
+
+            //weights
+            .weights="bins/conv4_4_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_4_dwise_scale.bin",
+            .scale_bias="bins/conv4_4_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_4_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv4_4_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_4_dwise
+
+    { //conv4_4_linear (idx=28)
+        .name="conv4_4_linear",
+        .type=CONVOLUTION,
+        .input=27,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=64,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv4_4_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_4_linear_scale.bin",
+            .scale_bias="bins/conv4_4_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_4_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv4_4_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_4_linear
+
+    { //block4_4 (idx=29)
+        .name="block4_4",
+        .type=ELTWISE,
+        .input=28,
+        .input2=25,
+        .param = { .eltwise = {
+            .type=EW_SUM
+       }}
+    },//end of block4_4
+
+
+    { //conv4_5_expand (idx=30)
+        .name="conv4_5_expand",
+        .type=CONVOLUTION,
+        .input=29,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=384,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv4_5_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_5_expand_scale.bin",
+            .scale_bias="bins/conv4_5_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_5_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv4_5_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_5_expand
+
+    { //conv4_5_dwise (idx=31)
+        .name="conv4_5_dwise",
+        .type=CONVOLUTION,
+        .input=30,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=384,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=384,
+
+            //weights
+            .weights="bins/conv4_5_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_5_dwise_scale.bin",
+            .scale_bias="bins/conv4_5_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_5_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv4_5_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_5_dwise
+
+    { //conv4_5_linear (idx=32)
+        .name="conv4_5_linear",
+        .type=CONVOLUTION,
+        .input=31,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=64,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv4_5_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_5_linear_scale.bin",
+            .scale_bias="bins/conv4_5_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_5_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv4_5_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_5_linear
+
+    { //block4_5 (idx=33)
+        .name="block4_5",
+        .type=ELTWISE,
+        .input=32,
+        .input2=29,
+        .param = { .eltwise = {
+            .type=EW_SUM
+       }}
+    },//end of block4_5
+
+
+    { //conv4_6_expand (idx=34)
+        .name="conv4_6_expand",
+        .type=CONVOLUTION,
+        .input=33,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=384,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv4_6_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_6_expand_scale.bin",
+            .scale_bias="bins/conv4_6_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_6_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv4_6_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_6_expand
+
+    { //conv4_6_dwise (idx=35)
+        .name="conv4_6_dwise",
+        .type=CONVOLUTION,
+        .input=34,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=384,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=384,
+
+            //weights
+            .weights="bins/conv4_6_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_6_dwise_scale.bin",
+            .scale_bias="bins/conv4_6_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_6_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv4_6_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_6_dwise
+
+    { //conv4_6_linear (idx=36)
+        .name="conv4_6_linear",
+        .type=CONVOLUTION,
+        .input=35,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=64,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv4_6_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_6_linear_scale.bin",
+            .scale_bias="bins/conv4_6_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_6_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv4_6_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_6_linear
+
+    { //block4_6 (idx=37)
+        .name="block4_6",
+        .type=ELTWISE,
+        .input=36,
+        .input2=33,
+        .param = { .eltwise = {
+            .type=EW_SUM
+       }}
+    },//end of block4_6
+
+    { //conv4_7_expand (idx=38)
+        .name="conv4_7_expand",
+        .type=CONVOLUTION,
+        .input=37,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=384,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv4_7_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_7_expand_scale.bin",
+            .scale_bias="bins/conv4_7_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_7_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv4_7_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_7_expand
+
+    { //conv4_7_dwise (idx=39)
+        .name="conv4_7_dwise",
+        .type=CONVOLUTION,
+        .input=38,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=384,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=2,
+            .Sx=2,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=384,
+
+            //weights
+            .weights="bins/conv4_7_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_7_dwise_scale.bin",
+            .scale_bias="bins/conv4_7_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_7_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv4_7_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_7_dwise
+
+    { //conv4_7_linear (idx=40)
+        .name="conv4_7_linear",
+        .type=CONVOLUTION,
+        .input=39,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=96,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv4_7_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv4_7_linear_scale.bin",
+            .scale_bias="bins/conv4_7_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv4_7_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv4_7_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv4_7_linear
+
+    { //conv5_1_expand (idx=41)
+        .name="conv5_1_expand",
+        .type=CONVOLUTION,
+        .input=40,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=576,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv5_1_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv5_1_expand_scale.bin",
+            .scale_bias="bins/conv5_1_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv5_1_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv5_1_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv5_1_expand
+
+    { //conv5_1_dwise (idx=42)
+        .name="conv5_1_dwise",
+        .type=CONVOLUTION,
+        .input=41,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=576,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=576,
+
+            //weights
+            .weights="bins/conv5_1_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv5_1_dwise_scale.bin",
+            .scale_bias="bins/conv5_1_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv5_1_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv5_1_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv5_1_dwise
+
+    { //conv5_1_linear (idx=43)
+        .name="conv5_1_linear",
+        .type=CONVOLUTION,
+        .input=42,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=96,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv5_1_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv5_1_linear_scale.bin",
+            .scale_bias="bins/conv5_1_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv5_1_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv5_1_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv5_1_linear
+
+
+
+    { //block5_1 (idx=44)
+        .name="block5_1",
+        .type=ELTWISE,
+        .input=43,
+        .input2=40,
+        .param = { .eltwise = {
+            .type=EW_SUM
+       }}
+    },//end of block5_1
+
+    { //conv5_2_expand (idx=45)
+        .name="conv5_2_expand",
+        .type=CONVOLUTION,
+        .input=44,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=576,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv5_2_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv5_2_expand_scale.bin",
+            .scale_bias="bins/conv5_2_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv5_2_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv5_2_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv5_2_expand
+
+    { //conv5_2_dwise (idx=46)
+        .name="conv5_2_dwise",
+        .type=CONVOLUTION,
+        .input=45,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=576,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=576,
+
+            //weights
+            .weights="bins/conv5_2_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv5_2_dwise_scale.bin",
+            .scale_bias="bins/conv5_2_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv5_2_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv5_2_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv5_2_dwise
+
+    { //conv5_2_linear (idx=47)
+        .name="conv5_2_linear",
+        .type=CONVOLUTION,
+        .input=46,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=96,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv5_2_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv5_2_linear_scale.bin",
+            .scale_bias="bins/conv5_2_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv5_2_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv5_2_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv5_2_linear
+
+    { //block5_2 (idx=48)
+        .name="block5_2",
+        .type=ELTWISE,
+        .input=47,
+        .input2=44,
+        .param = { .eltwise = {
+            .type=EW_SUM
+       }}
+    },//end of block5_2
+
+    { //conv5_3_expand (idx=49)
+        .name="conv5_3_expand",
+        .type=CONVOLUTION,
+        .input=48,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=576,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv5_3_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv5_3_expand_scale.bin",
+            .scale_bias="bins/conv5_3_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv5_3_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv5_3_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv5_3_expand
+
+    { //conv5_3_dwise (idx=50)
+        .name="conv5_3_dwise",
+        .type=CONVOLUTION,
+        .input=49,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=576,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=2,
+            .Sx=2,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=576,
+
+            //weights
+            .weights="bins/conv5_3_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv5_3_dwise_scale.bin",
+            .scale_bias="bins/conv5_3_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv5_3_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv5_3_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv5_3_dwise
+
+    { //conv5_3_linear (idx=51)
+        .name="conv5_3_linear",
+        .type=CONVOLUTION,
+        .input=50,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=160,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv5_3_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv5_3_linear_scale.bin",
+            .scale_bias="bins/conv5_3_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv5_3_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv5_3_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv5_3_linear
+
+    { //conv6_1_expand (idx=52)
+        .name="conv6_1_expand",
+        .type=CONVOLUTION,
+        .input=51,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=960,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv6_1_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv6_1_expand_scale.bin",
+            .scale_bias="bins/conv6_1_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv6_1_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv6_1_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv6_1_expand
+
+    { //conv6_1_dwise (idx=53)
+        .name="conv6_1_dwise",
+        .type=CONVOLUTION,
+        .input=52,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=960,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=960,
+
+            //weights
+            .weights="bins/conv6_1_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv6_1_dwise_scale.bin",
+            .scale_bias="bins/conv6_1_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv6_1_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv6_1_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv6_1_dwise
+
+    { //conv6_1_linear (idx=54)
+        .name="conv6_1_linear",
+        .type=CONVOLUTION,
+        .input=53,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=160,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv6_1_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv6_1_linear_scale.bin",
+            .scale_bias="bins/conv6_1_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv6_1_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv6_1_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv6_1_linear
+
+
+
+    { //block6_1 (idx=55)
+        .name="block6_1",
+        .type=ELTWISE,
+        .input=54,
+        .input2=51,
+        .param = { .eltwise = {
+            .type=EW_SUM
+       }}
+    },//end of block6_1
+
+
+    { //conv6_2_expand (idx=56)
+        .name="conv6_2_expand",
+        .type=CONVOLUTION,
+        .input=55,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=960,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv6_2_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv6_2_expand_scale.bin",
+            .scale_bias="bins/conv6_2_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv6_2_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv6_2_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv6_2_expand
+
+    { //conv6_2_dwise (idx=57)
+        .name="conv6_2_dwise",
+        .type=CONVOLUTION,
+        .input=56,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=960,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=960,
+
+            //weights
+            .weights="bins/conv6_2_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv6_2_dwise_scale.bin",
+            .scale_bias="bins/conv6_2_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv6_2_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv6_2_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv6_2_dwise
+
+    { //conv6_2_linear (idx=58)
+        .name="conv6_2_linear",
+        .type=CONVOLUTION,
+        .input=57,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=160,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv6_2_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv6_2_linear_scale.bin",
+            .scale_bias="bins/conv6_2_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv6_2_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv6_2_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv6_2_linear
+
+    { //block6_2 (idx=59)
+        .name="block6_2",
+        .type=ELTWISE,
+        .input=58,
+        .input2=55,
+        .param = { .eltwise = {
+            .type=EW_SUM
+       }}
+    },//end of block6_2
+
+    { //conv6_3_expand (idx=60)
+        .name="conv6_3_expand",
+        .type=CONVOLUTION,
+        .input=59,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=960,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv6_3_expand_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv6_3_expand_scale.bin",
+            .scale_bias="bins/conv6_3_expand_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv6_3_expand_batchnorm_mean.bin",
+            .bn_var="bins/conv6_3_expand_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv6_3_expand
+
+    { //conv6_3_dwise (idx=61)
+        .name="conv6_3_dwise",
+        .type=CONVOLUTION,
+        .input=60,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=960,
+
+            //kernel sizes
+            .Ky=3,
+            .Kx=3,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=1,
+
+            //group
+            .group=960,
+
+            //weights
+            .weights="bins/conv6_3_dwise_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv6_3_dwise_scale.bin",
+            .scale_bias="bins/conv6_3_dwise_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv6_3_dwise_batchnorm_mean.bin",
+            .bn_var="bins/conv6_3_dwise_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv6_3_dwise
+
+    { //conv6_3_linear (idx=62)
+        .name="conv6_3_linear",
+        .type=CONVOLUTION,
+        .input=61,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=320,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv6_3_linear_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv6_3_linear_scale.bin",
+            .scale_bias="bins/conv6_3_linear_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv6_3_linear_batchnorm_mean.bin",
+            .bn_var="bins/conv6_3_linear_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv6_3_linear
+
+    { //conv6_4 (idx=63)
+        .name="conv6_4",
+        .type=CONVOLUTION,
+        .input=62,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=1280,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/conv6_4_weights.bin",
+
+            //bias
+            .bias=NULL,
+
+            //scaling
+            .scale="bins/conv6_4_scale.bin",
+            .scale_bias="bins/conv6_4_scale_bias.bin",
+
+            //batch norm
+            .bn_mean="bins/conv6_4_batchnorm_mean.bin",
+            .bn_var="bins/conv6_4_batchnorm_variance.bin",
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=true,
+
+            //fully connected
+            .fc=false
+       }}
+    },//end of conv6_4
+
+    { //pool6 (idx=64)
+        .name="pool6",
+        .type=POOLING,
+        .input=63,
+        .input2=-1,
+        .param={ .pool={
+            .type=POOL_AVG,
+            .global=true,
+            .Kx=-1,
+            .Ky=-1,
+            .Sx=1,
+            .Sy=1,
+        }}
+    },//end of pool6
+
+
+    { //fc6 (idx=65)
+        .name="fc7",
+        .type=CONVOLUTION,
+        .input=64,
+        .input2=-1,
+        .param = { .conv = {
+            //number of output feature maps
+            .num_out=1000,
+
+            //kernel sizes
+            .Ky=1,
+            .Kx=1,
+
+            //strides
+            .Sy=1,
+            .Sx=1,
+
+            //padding
+            .pad=0,
+
+            //group
+            .group=1,
+
+            //weights
+            .weights="bins/fc7_weights.bin",
+
+            //bias
+            .bias="bins/fc7_bias.bin",
+
+            //scaling
+            .scale=NULL,
+            .scale_bias=NULL,
+
+            //batch norm
+            .bn_mean=NULL,
+            .bn_var=NULL,
+            .bn_eps=0.00001f,
+
+            //relu
+            .relu=false,
+
+            //fully connected
+            .fc=true
+        }}
+    },//end of pool6
+
+    {
+        //last layer indicator
+        .name=NULL,
+        .type=NONE,
+        .input=-1,
+        .input2=-1,
+        .param = { .eltwise = { .type = EW_SUM  }}
+    }
+}; //end of layers
+
 Network mobilenetv2={
     .name="MobilenetV2",
-    .layers={
-
-
-        //data (idx=0)
-        //first layer is the input image
-        //end data
-
-        { //conv1 (idx=1)
-            .name="conv1",
-            .type=CONVOLUTION,
-            .input=0,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=32,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=2,
-                .Sx=2,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv1_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv1_scale.bin",
-                .scale_bias="bins/conv1_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv1_batchnorm_mean.bin",
-                .bn_var="bins/conv1_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv1
-
-        { //conv2_1_expand (idx=2)
-            .name="conv2_1_expand",
-            .type=CONVOLUTION,
-            .input=1,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=32,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv2_1_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv2_1_expand_scale.bin",
-                .scale_bias="bins/conv2_1_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv2_1_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv2_1_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv2_1_expand
-
-        { //conv2_1_dwise (idx=3)
-            .name="conv2_1_dwise",
-            .type=CONVOLUTION,
-            .input=2,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=32,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=32,
-
-                //weights
-                .weights="bins/conv2_1_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv2_1_dwise_scale.bin",
-                .scale_bias="bins/conv2_1_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv2_1_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv2_1_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv2_1_dwise
-
-        { //conv2_1_linear (idx=4)
-            .name="conv2_1_linear",
-            .type=CONVOLUTION,
-            .input=3,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=16,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv2_1_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv2_1_linear_scale.bin",
-                .scale_bias="bins/conv2_1_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv2_1_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv2_1_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv2_1_linear
-
-
-        { //conv2_2_expand (idx=5)
-            .name="conv2_2_expand",
-            .type=CONVOLUTION,
-            .input=4,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=96,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv2_2_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv2_2_expand_scale.bin",
-                .scale_bias="bins/conv2_2_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv2_2_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv2_2_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv2_2_expand
-
-        { //conv2_2_dwise (idx=6)
-            .name="conv2_2_dwise",
-            .type=CONVOLUTION,
-            .input=5,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=96,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=2,
-                .Sx=2,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=96,
-
-                //weights
-                .weights="bins/conv2_2_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv2_2_dwise_scale.bin",
-                .scale_bias="bins/conv2_2_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv2_2_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv2_2_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv2_2_dwise
-
-        { //conv2_2_linear (idx=7)
-            .name="conv2_2_linear",
-            .type=CONVOLUTION,
-            .input=6,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=24,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv2_2_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv2_2_linear_scale.bin",
-                .scale_bias="bins/conv2_2_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv2_2_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv2_2_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv2_2_linear
-
-
-        { //conv3_1_expand (idx=8)
-            .name="conv3_1_expand",
-            .type=CONVOLUTION,
-            .input=7,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=144,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv3_1_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv3_1_expand_scale.bin",
-                .scale_bias="bins/conv3_1_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv3_1_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv3_1_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv3_1_expand
-
-        { //conv3_1_dwise (idx=9)
-            .name="conv3_1_dwise",
-            .type=CONVOLUTION,
-            .input=8,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=144,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=144,
-
-                //weights
-                .weights="bins/conv3_1_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv3_1_dwise_scale.bin",
-                .scale_bias="bins/conv3_1_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv3_1_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv3_1_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv3_1_dwise
-
-        { //conv3_1_linear (idx=10)
-            .name="conv3_1_linear",
-            .type=CONVOLUTION,
-            .input=9,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=24,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv3_1_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv3_1_linear_scale.bin",
-                .scale_bias="bins/conv3_1_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv3_1_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv3_1_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv3_1_linear
-
-
-        { //block3_1 (idx=11)
-            .name="block3_1",
-            .type=ELTWISE,
-            .input=10,
-            .input2=7,
-            .param = { .eltwise = {
-                .type=EW_SUM
-           }}
-        },//end of block3_1
-
-        { //conv3_2_expand (idx=12)
-            .name="conv3_2_expand",
-            .type=CONVOLUTION,
-            .input=11,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=144,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv3_2_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv3_2_expand_scale.bin",
-                .scale_bias="bins/conv3_2_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv3_2_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv3_2_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv3_2_expand
-
-        { //conv3_2_dwise (idx=13)
-            .name="conv3_2_dwise",
-            .type=CONVOLUTION,
-            .input=12,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=144,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=2,
-                .Sx=2,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=144,
-
-                //weights
-                .weights="bins/conv3_2_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv3_2_dwise_scale.bin",
-                .scale_bias="bins/conv3_2_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv3_2_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv3_2_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv3_2_dwise
-
-        { //conv3_2_linear (idx=14)
-            .name="conv3_2_linear",
-            .type=CONVOLUTION,
-            .input=13,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=32,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv3_2_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv3_2_linear_scale.bin",
-                .scale_bias="bins/conv3_2_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv3_2_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv3_2_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv3_2_linear
-
-
-        { //conv4_1_expand (idx=15)
-            .name="conv4_1_expand",
-            .type=CONVOLUTION,
-            .input=14,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=192,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv4_1_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_1_expand_scale.bin",
-                .scale_bias="bins/conv4_1_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_1_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv4_1_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_1_expand
-
-        { //conv4_1_dwise (idx=16)
-            .name="conv4_1_dwise",
-            .type=CONVOLUTION,
-            .input=15,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=192,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=192,
-
-                //weights
-                .weights="bins/conv4_1_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_1_dwise_scale.bin",
-                .scale_bias="bins/conv4_1_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_1_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv4_1_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_1_dwise
-
-        { //conv4_1_linear (idx=17)
-            .name="conv4_1_linear",
-            .type=CONVOLUTION,
-            .input=16,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=32,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv4_1_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_1_linear_scale.bin",
-                .scale_bias="bins/conv4_1_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_1_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv4_1_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_1_linear
-
-        { //block4_1 (idx=18)
-            .name="block4_1",
-            .type=ELTWISE,
-            .input=17,
-            .input2=14,
-            .param = { .eltwise = {
-                .type=EW_SUM
-           }}
-        },//end of block4_1
-
-        { //conv4_2_expand (idx=19)
-            .name="conv4_2_expand",
-            .type=CONVOLUTION,
-            .input=18,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=192,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv4_2_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_2_expand_scale.bin",
-                .scale_bias="bins/conv4_2_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_2_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv4_2_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_2_expand
-
-        { //conv4_2_dwise (idx=20)
-            .name="conv4_2_dwise",
-            .type=CONVOLUTION,
-            .input=19,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=192,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=192,
-
-                //weights
-                .weights="bins/conv4_2_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_2_dwise_scale.bin",
-                .scale_bias="bins/conv4_2_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_2_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv4_2_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_2_dwise
-
-        { //conv4_2_linear (idx=21)
-            .name="conv4_2_linear",
-            .type=CONVOLUTION,
-            .input=20,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=32,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv4_2_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_2_linear_scale.bin",
-                .scale_bias="bins/conv4_2_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_2_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv4_2_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_2_linear
-
-        { //block4_2 (idx=22)
-            .name="block4_2",
-            .type=ELTWISE,
-            .input=21,
-            .input2=18,
-            .param = { .eltwise = {
-                .type=EW_SUM
-           }}
-        },//end of block4_2
-
-
-        { //conv4_3_expand (idx=23)
-            .name="conv4_3_expand",
-            .type=CONVOLUTION,
-            .input=22,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=192,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv4_3_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_3_expand_scale.bin",
-                .scale_bias="bins/conv4_3_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_3_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv4_3_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_3_expand
-
-        { //conv4_3_dwise (idx=24)
-            .name="conv4_3_dwise",
-            .type=CONVOLUTION,
-            .input=23,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=192,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=192,
-
-                //weights
-                .weights="bins/conv4_3_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_3_dwise_scale.bin",
-                .scale_bias="bins/conv4_3_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_3_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv4_3_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_3_dwise
-
-        { //conv4_3_linear (idx=25)
-            .name="conv4_3_linear",
-            .type=CONVOLUTION,
-            .input=24,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=64,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv4_3_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_3_linear_scale.bin",
-                .scale_bias="bins/conv4_3_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_3_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv4_3_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_3_linear
-
-
-        { //conv4_4_expand (idx=26)
-            .name="conv4_4_expand",
-            .type=CONVOLUTION,
-            .input=25,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=384,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv4_4_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_4_expand_scale.bin",
-                .scale_bias="bins/conv4_4_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_4_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv4_4_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_4_expand
-
-        { //conv4_4_dwise (idx=27)
-            .name="conv4_4_dwise",
-            .type=CONVOLUTION,
-            .input=26,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=384,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=384,
-
-                //weights
-                .weights="bins/conv4_4_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_4_dwise_scale.bin",
-                .scale_bias="bins/conv4_4_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_4_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv4_4_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_4_dwise
-
-        { //conv4_4_linear (idx=28)
-            .name="conv4_4_linear",
-            .type=CONVOLUTION,
-            .input=27,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=64,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv4_4_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_4_linear_scale.bin",
-                .scale_bias="bins/conv4_4_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_4_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv4_4_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_4_linear
-
-        { //block4_4 (idx=29)
-            .name="block4_4",
-            .type=ELTWISE,
-            .input=28,
-            .input2=25,
-            .param = { .eltwise = {
-                .type=EW_SUM
-           }}
-        },//end of block4_4
-
-
-        { //conv4_5_expand (idx=30)
-            .name="conv4_5_expand",
-            .type=CONVOLUTION,
-            .input=29,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=384,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv4_5_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_5_expand_scale.bin",
-                .scale_bias="bins/conv4_5_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_5_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv4_5_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_5_expand
-
-        { //conv4_5_dwise (idx=31)
-            .name="conv4_5_dwise",
-            .type=CONVOLUTION,
-            .input=30,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=384,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=384,
-
-                //weights
-                .weights="bins/conv4_5_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_5_dwise_scale.bin",
-                .scale_bias="bins/conv4_5_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_5_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv4_5_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_5_dwise
-
-        { //conv4_5_linear (idx=32)
-            .name="conv4_5_linear",
-            .type=CONVOLUTION,
-            .input=31,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=64,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv4_5_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_5_linear_scale.bin",
-                .scale_bias="bins/conv4_5_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_5_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv4_5_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_5_linear
-
-        { //block4_5 (idx=33)
-            .name="block4_5",
-            .type=ELTWISE,
-            .input=32,
-            .input2=29,
-            .param = { .eltwise = {
-                .type=EW_SUM
-           }}
-        },//end of block4_5
-
-
-        { //conv4_6_expand (idx=34)
-            .name="conv4_6_expand",
-            .type=CONVOLUTION,
-            .input=33,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=384,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv4_6_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_6_expand_scale.bin",
-                .scale_bias="bins/conv4_6_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_6_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv4_6_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_6_expand
-
-        { //conv4_6_dwise (idx=35)
-            .name="conv4_6_dwise",
-            .type=CONVOLUTION,
-            .input=34,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=384,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=384,
-
-                //weights
-                .weights="bins/conv4_6_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_6_dwise_scale.bin",
-                .scale_bias="bins/conv4_6_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_6_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv4_6_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_6_dwise
-
-        { //conv4_6_linear (idx=36)
-            .name="conv4_6_linear",
-            .type=CONVOLUTION,
-            .input=35,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=64,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv4_6_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_6_linear_scale.bin",
-                .scale_bias="bins/conv4_6_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_6_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv4_6_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_6_linear
-
-        { //block4_6 (idx=37)
-            .name="block4_6",
-            .type=ELTWISE,
-            .input=36,
-            .input2=33,
-            .param = { .eltwise = {
-                .type=EW_SUM
-           }}
-        },//end of block4_6
-
-        { //conv4_7_expand (idx=38)
-            .name="conv4_7_expand",
-            .type=CONVOLUTION,
-            .input=37,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=384,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv4_7_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_7_expand_scale.bin",
-                .scale_bias="bins/conv4_7_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_7_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv4_7_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_7_expand
-
-        { //conv4_7_dwise (idx=39)
-            .name="conv4_7_dwise",
-            .type=CONVOLUTION,
-            .input=38,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=384,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=2,
-                .Sx=2,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=384,
-
-                //weights
-                .weights="bins/conv4_7_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_7_dwise_scale.bin",
-                .scale_bias="bins/conv4_7_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_7_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv4_7_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_7_dwise
-
-        { //conv4_7_linear (idx=40)
-            .name="conv4_7_linear",
-            .type=CONVOLUTION,
-            .input=39,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=96,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv4_7_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv4_7_linear_scale.bin",
-                .scale_bias="bins/conv4_7_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv4_7_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv4_7_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv4_7_linear
-
-        { //conv5_1_expand (idx=41)
-            .name="conv5_1_expand",
-            .type=CONVOLUTION,
-            .input=40,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=576,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv5_1_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv5_1_expand_scale.bin",
-                .scale_bias="bins/conv5_1_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv5_1_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv5_1_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv5_1_expand
-
-        { //conv5_1_dwise (idx=42)
-            .name="conv5_1_dwise",
-            .type=CONVOLUTION,
-            .input=41,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=576,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=576,
-
-                //weights
-                .weights="bins/conv5_1_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv5_1_dwise_scale.bin",
-                .scale_bias="bins/conv5_1_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv5_1_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv5_1_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv5_1_dwise
-
-        { //conv5_1_linear (idx=43)
-            .name="conv5_1_linear",
-            .type=CONVOLUTION,
-            .input=42,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=96,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv5_1_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv5_1_linear_scale.bin",
-                .scale_bias="bins/conv5_1_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv5_1_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv5_1_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv5_1_linear
-
-
-
-        { //block5_1 (idx=44)
-            .name="block5_1",
-            .type=ELTWISE,
-            .input=43,
-            .input2=40,
-            .param = { .eltwise = {
-                .type=EW_SUM
-           }}
-        },//end of block5_1
-
-        { //conv5_2_expand (idx=45)
-            .name="conv5_2_expand",
-            .type=CONVOLUTION,
-            .input=44,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=576,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv5_2_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv5_2_expand_scale.bin",
-                .scale_bias="bins/conv5_2_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv5_2_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv5_2_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv5_2_expand
-
-        { //conv5_2_dwise (idx=46)
-            .name="conv5_2_dwise",
-            .type=CONVOLUTION,
-            .input=45,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=576,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=576,
-
-                //weights
-                .weights="bins/conv5_2_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv5_2_dwise_scale.bin",
-                .scale_bias="bins/conv5_2_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv5_2_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv5_2_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv5_2_dwise
-
-        { //conv5_2_linear (idx=47)
-            .name="conv5_2_linear",
-            .type=CONVOLUTION,
-            .input=46,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=96,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv5_2_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv5_2_linear_scale.bin",
-                .scale_bias="bins/conv5_2_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv5_2_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv5_2_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv5_2_linear
-
-        { //block5_2 (idx=48)
-            .name="block5_2",
-            .type=ELTWISE,
-            .input=47,
-            .input2=44,
-            .param = { .eltwise = {
-                .type=EW_SUM
-           }}
-        },//end of block5_2
-
-        { //conv5_3_expand (idx=49)
-            .name="conv5_3_expand",
-            .type=CONVOLUTION,
-            .input=48,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=576,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv5_3_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv5_3_expand_scale.bin",
-                .scale_bias="bins/conv5_3_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv5_3_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv5_3_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv5_3_expand
-
-        { //conv5_3_dwise (idx=50)
-            .name="conv5_3_dwise",
-            .type=CONVOLUTION,
-            .input=49,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=576,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=2,
-                .Sx=2,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=576,
-
-                //weights
-                .weights="bins/conv5_3_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv5_3_dwise_scale.bin",
-                .scale_bias="bins/conv5_3_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv5_3_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv5_3_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv5_3_dwise
-
-        { //conv5_3_linear (idx=51)
-            .name="conv5_3_linear",
-            .type=CONVOLUTION,
-            .input=50,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=160,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv5_3_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv5_3_linear_scale.bin",
-                .scale_bias="bins/conv5_3_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv5_3_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv5_3_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv5_3_linear
-
-        { //conv6_1_expand (idx=52)
-            .name="conv6_1_expand",
-            .type=CONVOLUTION,
-            .input=51,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=960,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv6_1_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv6_1_expand_scale.bin",
-                .scale_bias="bins/conv6_1_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv6_1_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv6_1_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv6_1_expand
-
-        { //conv6_1_dwise (idx=53)
-            .name="conv6_1_dwise",
-            .type=CONVOLUTION,
-            .input=52,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=960,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=960,
-
-                //weights
-                .weights="bins/conv6_1_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv6_1_dwise_scale.bin",
-                .scale_bias="bins/conv6_1_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv6_1_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv6_1_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv6_1_dwise
-
-        { //conv6_1_linear (idx=54)
-            .name="conv6_1_linear",
-            .type=CONVOLUTION,
-            .input=53,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=160,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv6_1_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv6_1_linear_scale.bin",
-                .scale_bias="bins/conv6_1_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv6_1_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv6_1_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv6_1_linear
-
-
-
-        { //block6_1 (idx=55)
-            .name="block6_1",
-            .type=ELTWISE,
-            .input=54,
-            .input2=51,
-            .param = { .eltwise = {
-                .type=EW_SUM
-           }}
-        },//end of block6_1
-
-
-        { //conv6_2_expand (idx=56)
-            .name="conv6_2_expand",
-            .type=CONVOLUTION,
-            .input=55,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=960,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv6_2_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv6_2_expand_scale.bin",
-                .scale_bias="bins/conv6_2_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv6_2_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv6_2_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv6_2_expand
-
-        { //conv6_2_dwise (idx=57)
-            .name="conv6_2_dwise",
-            .type=CONVOLUTION,
-            .input=56,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=960,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=960,
-
-                //weights
-                .weights="bins/conv6_2_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv6_2_dwise_scale.bin",
-                .scale_bias="bins/conv6_2_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv6_2_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv6_2_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv6_2_dwise
-
-        { //conv6_2_linear (idx=58)
-            .name="conv6_2_linear",
-            .type=CONVOLUTION,
-            .input=57,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=160,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv6_2_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv6_2_linear_scale.bin",
-                .scale_bias="bins/conv6_2_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv6_2_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv6_2_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv6_2_linear
-
-        { //block6_2 (idx=59)
-            .name="block6_2",
-            .type=ELTWISE,
-            .input=58,
-            .input2=55,
-            .param = { .eltwise = {
-                .type=EW_SUM
-           }}
-        },//end of block6_2
-
-        { //conv6_3_expand (idx=60)
-            .name="conv6_3_expand",
-            .type=CONVOLUTION,
-            .input=59,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=960,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv6_3_expand_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv6_3_expand_scale.bin",
-                .scale_bias="bins/conv6_3_expand_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv6_3_expand_batchnorm_mean.bin",
-                .bn_var="bins/conv6_3_expand_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv6_3_expand
-
-        { //conv6_3_dwise (idx=61)
-            .name="conv6_3_dwise",
-            .type=CONVOLUTION,
-            .input=60,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=960,
-
-                //kernel sizes
-                .Ky=3,
-                .Kx=3,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=1,
-
-                //group
-                .group=960,
-
-                //weights
-                .weights="bins/conv6_3_dwise_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv6_3_dwise_scale.bin",
-                .scale_bias="bins/conv6_3_dwise_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv6_3_dwise_batchnorm_mean.bin",
-                .bn_var="bins/conv6_3_dwise_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv6_3_dwise
-
-        { //conv6_3_linear (idx=62)
-            .name="conv6_3_linear",
-            .type=CONVOLUTION,
-            .input=61,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=320,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv6_3_linear_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv6_3_linear_scale.bin",
-                .scale_bias="bins/conv6_3_linear_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv6_3_linear_batchnorm_mean.bin",
-                .bn_var="bins/conv6_3_linear_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv6_3_linear
-
-        { //conv6_4 (idx=63)
-            .name="conv6_4",
-            .type=CONVOLUTION,
-            .input=62,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=1280,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/conv6_4_weights.bin",
-
-                //bias
-                .bias=NULL,
-
-                //scaling
-                .scale="bins/conv6_4_scale.bin",
-                .scale_bias="bins/conv6_4_scale_bias.bin",
-
-                //batch norm
-                .bn_mean="bins/conv6_4_batchnorm_mean.bin",
-                .bn_var="bins/conv6_4_batchnorm_variance.bin",
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=true,
-
-                //fully connected
-                .fc=false
-           }}
-        },//end of conv6_4
-
-        { //pool6 (idx=64)
-            .name="pool6",
-            .type=POOLING,
-            .input=63,
-            .input2=-1,
-            .param={ .pool={
-                .type=POOL_AVG,
-                .global=true,
-                .Kx=-1,
-                .Ky=-1,
-                .Sx=1,
-                .Sy=1,
-            }}
-        },//end of pool6
-
-
-        { //fc6 (idx=65)
-            .name="fc7",
-            .type=CONVOLUTION,
-            .input=64,
-            .input2=-1,
-            .param = { .conv = {
-                //number of output feature maps
-                .num_out=1000,
-
-                //kernel sizes
-                .Ky=1,
-                .Kx=1,
-
-                //strides
-                .Sy=1,
-                .Sx=1,
-
-                //padding
-                .pad=0,
-
-                //group
-                .group=1,
-
-                //weights
-                .weights="bins/fc7_weights.bin",
-
-                //bias
-                .bias="bins/fc7_bias.bin",
-
-                //scaling
-                .scale=NULL,
-                .scale_bias=NULL,
-
-                //batch norm
-                .bn_mean=NULL,
-                .bn_var=NULL,
-                .bn_eps=0.00001f,
-
-                //relu
-                .relu=false,
-
-                //fully connected
-                .fc=true
-            }}
-        },//end of pool6
-
-        {
-            //last layer indicator
-            .name=NULL,
-            .type=NONE,
-            .input=-1,
-            .input2=-1,
-            .param = { .eltwise = { .type = EW_SUM  }}
-        }
-
-    } //end of layers
+    .layers=layers
 };
 
 

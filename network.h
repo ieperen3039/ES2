@@ -29,7 +29,7 @@ typedef struct{
 
 typedef struct{
     const char* name;
-    layer_t layers[66]; //note: in gcc this size is NOT required, but g++ does require it. bit of a shame
+    layer_t* layers; //list network of layers
 }Network;
 
 //inference on network
