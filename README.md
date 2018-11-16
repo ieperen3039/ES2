@@ -32,6 +32,14 @@ To enable first clean and then build with the added ```CPU=1``` flag
 make clean; make CPU=1
 ```
 
+Finally there is a TIMING mode, which enables some of the default timers in the code.
+To enable first clean and then build with the added ```TIMING=1``` flag
+```shell
+make clean; make TIMING=1
+```
+
+Note that these various modes can be mixed as desired.
+
 Requirements
 ------------
 To be able to use this network not much is needed.

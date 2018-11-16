@@ -39,7 +39,7 @@ GENCODE_SM35    := -gencode arch=compute_35,code=sm_35
 GENCODE_SM50    := -gencode arch=compute_50,code=sm_50
 
 #NOTE: Set this based on your device!!
-GENCODE_FLAGS   := $(GENCODE_SM20)
+GENCODE_FLAGS   := $(GENCODE_SM20) $(GENCODE_SM35) $(GENCODE_SM50)
 
 # Location of the CUDA Toolkit binaries and libraries
 CUDA_PATH       ?= /usr/local/cuda

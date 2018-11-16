@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "logging.h"
+#include "timer.h"
 
 #ifndef SILENT
 //mapping of layer_type enum to strings
@@ -35,39 +36,44 @@ BLOB* network(Network* net, BLOB* input){
         //blobl pointer to hold output of this layer
         BLOB* out=NULL;
 
-        //in verbose mode print some progress to the user
-        info("Performing %s operation of layer %s\n", layer_type_str[layer.type], layer.name);
+        //wrapping the whole layer evaluation in a named timer object
+        timeit_named(layer.name,
 
-        //depending on type the actions differ
-        switch(layer.type){
-            case CONVOLUTION:
-                out = convolution(
-                    layer_blobs[layer.input],
-                    &(layer.param.conv)
-                );
-            break;
+            //in verbose mode print some progress to the user
+            info("Performing %s operation of layer %s\n", layer_type_str[layer.type], layer.name);
 
-            case ELTWISE:
-                out = eltwise2(
-                    layer_blobs[layer.input],
-                    layer_blobs[layer.input2],
-                    &(layer.param.eltwise)
-                );
+            //depending on type the actions differ
+            switch(layer.type){
+                case CONVOLUTION:
+                    out = convolution(
+                        layer_blobs[layer.input],
+                        &(layer.param.conv)
+                    );
+                break;
 
-            break;
+                case ELTWISE:
+                    out = eltwise2(
+                        layer_blobs[layer.input],
+                        layer_blobs[layer.input2],
+                        &(layer.param.eltwise)
+                    );
 
-            case POOLING:
-                out = pooling(
-                    layer_blobs[layer.input],
-                    &(layer.param.pool)
-                );
-            break;
+                break;
 
-            case NONE:
-                //last layer in the list - Note: should never reach here
-                out=NULL;
-            break;
-        }
+                case POOLING:
+                    out = pooling(
+                        layer_blobs[layer.input],
+                        &(layer.param.pool)
+                    );
+                break;
+
+                case NONE:
+                    //last layer in the list - Note: should never reach here
+                    out=NULL;
+                break;
+            }
+
+        )//end of timer wrapper
 
         //store out in the blob holding structure to be used by future layers
         //NOTE: currently all blobs are stored until the network is fully evaluated,

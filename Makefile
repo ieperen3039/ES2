@@ -16,6 +16,9 @@ endif
 ifdef CPU
 CFLAGS+= -DCPU_ONLY
 endif
+ifdef TIMING
+CFLAGS+= -DTIMING
+endif
 
 CUSRCS=$(wildcard *.cu)
 SRCS=$(wildcard *.c)
@@ -31,7 +34,7 @@ include images.mk
 .PHONY:check
 check:converted_$(basename $(notdir $(word 1,$(IMAGE_URLS)))).png $(EXE)
 	./$(EXE) $< | tee $@
-	@grep -q "Detect class: $(strip $(word 1, $(CLASS_IDX)))" $@ && echo "$(GREEN)correctly identified image $<$(NC)" ||  echo "$(RED)Did not correctly identify image $<$(NC)"
+	@grep -q "Detected class: $(strip $(word 1, $(CLASS_IDX)))" $@ && echo "$(GREEN)correctly identified image $<$(NC)" ||  echo "$(RED)Did not correctly identify image $<$(NC)"
 
 #link the executable
 .PRECIOUS:$(EXE)

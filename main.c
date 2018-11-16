@@ -6,6 +6,7 @@
 #include "mobilenetv2.h"
 #include "logging.h"
 #include "preprocessing.h"
+#include "timer.h"
 
 int argmax(BLOB* b){
     //find index of channel that is maximum
@@ -42,7 +43,14 @@ int main(int argc, char* argv[]){
 
     //perform inference
     info("Performing inference\n");
-    BLOB* out = network(&mobilenetv2, img);
+
+    //warp a timer around the network evaluation
+    timeit_named("Complete Network",
+
+        //evaluate the network
+        BLOB* out = network(&mobilenetv2, img);
+
+    );//end of timer wrapper
 
     //get class index of maximum
     int class_idx=argmax(out);
@@ -50,7 +58,7 @@ int main(int argc, char* argv[]){
         error("provided class index (%d) is out of bounds!\n", class_idx);
 
     //print the class index
-    printf("Detect class: %d\n", class_idx);
+    printf("Detected class: %d\n", class_idx);
 
     //print the class label
     switch(class_idx){
