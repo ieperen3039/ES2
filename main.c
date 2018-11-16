@@ -26,7 +26,7 @@ int main(int argc, char* argv[]){
 
 #ifndef SILENT
     //set stdout to line buffered such that piping to "tee" does not delay
-    setlinebuf(stdout);
+    setvbuf(stdout, NULL, _IOLBF, 0);
 #endif
 
     //read png into image structure
