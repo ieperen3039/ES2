@@ -30,16 +30,7 @@
 #include <png.h>
 #include "logging.h"
 
-void destroy_img(IMG* img){
-   for(int c=0;c<img->channels;c++){
-      for(int y=0;y<img->height;y++)
-          free(img->data[c][y]);
-      free(img->data[c]);
-   }
-   free(img->data);
-}
-
-IMG* read_png(const char *filename) {
+BLOB* read_png(const char *filename) {
   FILE *fp = fopen(filename, "rb");
   if(fp==NULL) error("Could not open %s for reading\n", filename);
 
@@ -61,13 +52,12 @@ IMG* read_png(const char *filename) {
 
 
   //Image struct
-  IMG* img = (IMG*) malloc(sizeof(IMG));
+  BLOB* img = (BLOB*) malloc(sizeof(BLOB));
 
   //set width and height
-  img->width      = png_get_image_width(png, info);
-  img->height     = png_get_image_height(png, info);
-  img->channels   = 3; //fixed for this function to 3
-
+  img->w   = png_get_image_width(png, info);
+  img->h   = png_get_image_height(png, info);
+  img->d   = 3; //fixed for this function to 3
 
   // Read any color_type into 8bit depth, RGBA format.
   // See http://www.libpng.org/pub/png/libpng-manual.txt
@@ -100,8 +90,8 @@ IMG* read_png(const char *filename) {
   png_read_update_info(png, info);
 
   //allocate space for png bytes
-  png_bytep* row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * img->height);
-  for(int y = 0; y < img->height; y++) {
+  png_bytep* row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * img->h);
+  for(int y = 0; y < img->h; y++) {
     row_pointers[y] = (png_byte*)malloc(png_get_rowbytes(png,info));
   }
 
@@ -111,24 +101,18 @@ IMG* read_png(const char *filename) {
   //close image
   fclose(fp);
 
-  //allocate space to hold floats and in different ordering
-  img->data= (float***)malloc(sizeof(float**)*img->channels);
-  for(int c=0; c<3;c++){
-    img->data[c]=(float**) malloc(sizeof(float*)*img->height);
-    for(int y=0; y<img->height; y++){
-        img->data[c][y]=(float*)malloc(sizeof(float)*img->width);
-    }
-  }
+  //allocate space to hold data (now that the dimensions are initialized blob_bytes will work)
+  img->data=(float*)malloc(blob_bytes(img));
 
-  //convert to elements to floats [0f-255f], and reorder to [chan][rows][col]
-  for(int c=0; c<img->channels;c++)
-    for(int y=0; y<img->height;y++)
-      for(int x=0;x<img->width;x++)
-        img->data[c][y][x]=(float)row_pointers[y][x*4+c];
+  //convert to elements to floats [0f-255f], and reorder to [chan][rows][col] dropping the alpha channel
+  for(int c=0; c<img->d;c++)
+    for(int y=0; y<img->h;y++)
+      for(int x=0;x<img->w;x++)
+        blob_data(img,c,y,x)=(float)row_pointers[y][x*4+c];
 
 
   //clean up original data structure
-  for(int y=0;y<img->height;y++)
+  for(int y=0;y<img->h;y++)
      free(row_pointers[y]);
   free(row_pointers);
 
@@ -139,7 +123,7 @@ IMG* read_png(const char *filename) {
   return img;
 }
 
-bool write_png(const char *filename, IMG* img) {
+bool write_png(const char *filename, BLOB* img) {
 
   FILE *fp = fopen(filename, "wb");
   if(!fp) error("Error opening file %s for writing\n", filename);
@@ -159,7 +143,7 @@ bool write_png(const char *filename, IMG* img) {
   png_set_IHDR(
     png,
     info,
-    img->width, img->height,
+    img->w, img->h,
     8,
     PNG_COLOR_TYPE_RGBA,
     PNG_INTERLACE_NONE,
@@ -176,17 +160,17 @@ bool write_png(const char *filename, IMG* img) {
 
 
   //allocate space for png bytes
-  png_bytep* row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * img->height);
-  for(int y = 0; y < img->height; y++) {
-    row_pointers[y] = (png_byte*)malloc(sizeof(png_byte)*4*img->width);
+  png_bytep* row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * img->h);
+  for(int y = 0; y < img->h; y++) {
+    row_pointers[y] = (png_byte*)malloc(sizeof(png_byte)*4*img->w);
   }
 
   //convert and reorder image float data
-  for(int y=0; y<img->height;y++){
-    for(int x=0;x<img->width;x++){
+  for(int y=0; y<img->h;y++){
+    for(int x=0;x<img->w;x++){
         for(int c=0;c<3;c++){
             //copy over RGB channels
-            row_pointers[y][x*4+c]=(png_byte) img->data[c][y][x];
+            row_pointers[y][x*4+c]=(png_byte) blob_data(img,c,y,x);
         }
         //add alpha channel back in there
         row_pointers[y][x*4+3]=(png_byte)0xFF;
@@ -201,7 +185,7 @@ bool write_png(const char *filename, IMG* img) {
   fclose(fp);
 
   //clean up byte data structure
-  for(int y = 0; y < img->height; y++) {
+  for(int y = 0; y < img->h; y++) {
     free(row_pointers[y]);
   }
   free(row_pointers);

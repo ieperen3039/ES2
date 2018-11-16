@@ -21,10 +21,24 @@ This is to be expected though, and the correctness of the network is verified by
 In principle all images from [imagenet](www.image-net.org/) can be used (and of course also new images!).
 
 A debug mode is also available, which stores intermediate results in text files for comparison to a reference.
-To build in debug mode, first clean and then build with the added ```DEBUG=1``` flag 
+To build in debug mode, first clean and then build with the added ```DEBUG=1``` flag
 ```shell
 make clean; make DEBUG=1
 ```
+
+Similarly there is a CPU ONLY mode, which uses only CPU functions.
+To enable first clean and then build with the added ```CPU=1``` flag
+```shell
+make clean; make CPU=1
+```
+
+Finally there is a TIMING mode, which enables some of the default timers in the code.
+To enable first clean and then build with the added ```TIMING=1``` flag
+```shell
+make clean; make TIMING=1
+```
+
+Note that these various modes can be mixed as desired.
 
 Requirements
 ------------

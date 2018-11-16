@@ -22,17 +22,17 @@ typedef enum{
 typedef struct{
     const char* name;
     layer_type type;
-    layer_param_t param;
     int input;
     int input2;
+    layer_param_t param;
 }layer_t;
 
 typedef struct{
     const char* name;
-    layer_t layers[];
+    layer_t* layers; //list network of layers
 }Network;
 
 //inference on network
-BLOB* network(Network* net, IMG* img);
+BLOB* network(Network* net, BLOB* input);
 
 #endif

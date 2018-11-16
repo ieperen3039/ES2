@@ -12,20 +12,20 @@ BLOB* pooling(BLOB* in, pool_param_t* p){
         error("only global pooling supported!\n");
 
     //global pooling, so output is 1x1
-    BLOB* out = alloc_blob(in->d, 1, 1);
+    BLOB* out = blob_alloc(in->d, 1, 1);
 
-    //set bias or init with zeroes
+    //perform global pooling
     for(int o=0;o<out->d;o++){
         //init reduction result
-        float r=(p->type==POOL_MAX)?in->data[o][0][0]:0.0f;
+        float r=(p->type==POOL_MAX)?blob_data(in,o,0,0):0.0f;
         for(int m=0;m<in->h;m++)
             for(int n=0;n<in->w;n++)
                 switch(p->type){
                     case POOL_AVG:
-                       r+=in->data[o][m][n];
+                       r+=blob_data(in,o,m,n);
                     break;
                     case POOL_MAX:
-                       r=fmax(r,in->data[o][m][n]);
+                       r=fmax(r,blob_data(in,o,m,n));
                     break;
                  }
 
@@ -34,7 +34,7 @@ BLOB* pooling(BLOB* in, pool_param_t* p){
             r/=(in->h*in->w);
 
         //store result in output blob
-        out->data[o][0][0]=r;
+        blob_data(out,o,0,0)=r;
     }
 
     //return pooled result
