@@ -49,13 +49,19 @@ $(EXE):$(OBJS)
 	@$(NVCC) $(NVCCFLAGS) --generate-dependencies $< -o $(subst .o,.d,$@)
 	$(NVCC) $(NVCCFLAGS) -c $< -o $@ --compiler-options $(CFLAGS)
 
+#Create an archive of the code
+USER=$(shell whoami)
+ZIPFILE=$(USER).zip
+zip:$(ZIPFILE)
+$(ZIPFILE):clean
+	zip -r $@ ./* -x ./bins/*
 
 #build dependency files if we are not cleaning
 ifneq ($(filter clean,$(MAKECMDGOALS)),clean)
 -include $(DEPS)
 endif
 
-CLEAN=$(OBJS) $(DEPS) $(EXE) check
+CLEAN=$(OBJS) $(DEPS) $(EXE) check $(ZIPFILE)
 
 #downloaded images
 CLEAN+=$(foreach URL, $(IMAGE_URLS), $(notdir $(URL)))
