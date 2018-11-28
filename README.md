@@ -1,7 +1,7 @@
 Image classification with Convolutional Neural Networks
 ---------------------------------------------------------
 The code provided here is a pure C implementation of Google's [mobilenetv2](https://arxiv.org/abs/1801.04381), trained for the [imagenet](www.image-net.org/) competition.
-As inspired by the legendary console game [robotfindkitten](https://en.wikipedia.org/wiki/Robotfindskitten) this network is particularly happy when it finds kitten :)
+As inspired by the legendary console game [robotfindskitten](https://en.wikipedia.org/wiki/Robotfindskitten) this network is particularly happy when it finds kitten :)
 
 Usage
 -----
@@ -18,7 +18,7 @@ make check_all
 Note that the included images all contain kitten, but sometimes the network misclassifies.
 This is to be expected though, and the correctness of the network is verified by checking the found classification index to the reference indexes in the makefile.
 
-In principle all images from [imagenet](www.image-net.org/) can be used (and of course also new images!).
+In principle all images from [imagenet](http://www.image-net.org/explore) can be used (and of course also new images!).
 
 A debug mode is also available, which stores intermediate results in text files for comparison to a reference.
 To build in debug mode, first clean and then build with the added ```DEBUG=1``` flag
