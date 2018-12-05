@@ -48,7 +48,7 @@ $3:$2
 $4:$3 $(EXE)
 	@echo "Evaluating image $3"
 	./$(EXE) $3 | tee $4
-	@grep -q "Detected class: $(strip $5)" $4 && echo "$(GREEN)correctly identified image $2$(NC)" ||  (echo "$(RED)Did not correctly identify image $2$(NC)"; rm -f $4; exit 1)
+	@grep -q "Detected class: $(strip $5)" $4 && echo -e "$(GREEN)correctly identified image $2$(NC)" ||  (echo -e "$(RED)Did not correctly identify image $2$(NC)"; rm -f $4; exit 1)
 
 endef
 
