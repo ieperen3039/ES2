@@ -7,35 +7,40 @@
 //perform  pooling
 BLOB* pooling(BLOB* in, pool_param_t* p){
 
-    //for now this framework only supports global pooling
-    if(!p->global)
-        error("only global pooling supported!\n");
+    //do some conversions of parameters in case of global pooling
+    int Sy=(!p->global)?p->Sy:in->h;
+    int Sx=(!p->global)?p->Sx:in->w;
+    int Ky=(!p->global)?p->Ky:in->h;
+    int Kx=(!p->global)?p->Kx:in->w;
 
-    //global pooling, so output is 1x1
-    BLOB* out = blob_alloc(in->d, 1, 1);
+    //perform pooling
+    BLOB* out=blob_alloc(in->d, in->h/Sy, in->w/Sx );
 
-    //perform global pooling
-    for(int o=0;o<out->d;o++){
-        //init reduction result
-        float r=(p->type==POOL_MAX)?blob_data(in,o,0,0):0.0f;
-        for(int m=0;m<in->h;m++)
-            for(int n=0;n<in->w;n++)
-                switch(p->type){
-                    case POOL_AVG:
-                       r+=blob_data(in,o,m,n);
-                    break;
-                    case POOL_MAX:
-                       r=fmax(r,blob_data(in,o,m,n));
-                    break;
-                 }
+    for(int o=0;o<out->d;o++)
+        for(int m=0;m<out->h;m++)
+            for(int n=0;n<out->w;n++){
 
-        //divide by N for averaging
-        if(p->type==POOL_AVG)
-            r/=(in->h*in->w);
+                //init reduction result
+                float r=(p->type==POOL_MAX)?blob_data(in,o,m*Sy,n*Sx):0.0f;
+                for(int k=0;k<Ky;k++)
+                    for(int l=0;l<Kx;l++)
+                        switch(p->type){
+                            case POOL_AVG:
+                               r+=blob_data(in,o,m*Sy+k,n*Sx+l);
+                            break;
+                            case POOL_MAX:
+                               r=fmax(r,blob_data(in,o,m*Sy+k,n*Sx+l));
+                            break;
+                        }
 
-        //store result in output blob
-        blob_data(out,o,0,0)=r;
-    }
+                //divide by window size for averaging
+                if(p->type==POOL_AVG)
+                    r/=(Ky*Kx);
+
+
+                //store result in output blob
+                blob_data(out,o,m,n)=r;
+            }
 
     //return pooled result
     return out;
