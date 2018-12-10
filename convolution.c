@@ -78,10 +78,13 @@ BLOB* convolution(BLOB* input, conv_param_t* p){
     if(p->pad!=0)
         in = pad(in, p->pad);
 
+    //if fully connected, the kernel size is set to the image size
+    int Ky=(p->fc)?in->h:p->Ky;
+    int Kx=(p->fc)?in->w:p->Kx;
 
     //create blob to hold output
-    int height=(int)floor(((float)in->h - (float)p->Ky)/(float)p->Sy)+1;
-    int width =(int)floor(((float)in->w - (float)p->Kx)/(float)p->Sx)+1;
+    int height=(int)floor(((float)in->h - (float)Ky)/(float)p->Sy)+1;
+    int width =(int)floor(((float)in->w - (float)Kx)/(float)p->Sx)+1;
     BLOB* out;
 
     //load bias if required
@@ -107,10 +110,6 @@ BLOB* convolution(BLOB* input, conv_param_t* p){
 
     //load weights
     BLOB* w = load_weights(in, p);
-
-    //if fully connected, the kernel size is set to the image size
-    int Ky=(p->fc)?in->h:p->Ky;
-    int Kx=(p->fc)?in->w:p->Kx;
 
     //perform convolution
     for(int g=0;g<p->group;g++)
