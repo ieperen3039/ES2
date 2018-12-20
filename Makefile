@@ -1,3 +1,5 @@
+include images.mk
+
 # OS Name (Linux or Darwin)
 OSUPPER = $(shell uname -s 2>/dev/null | tr [:lower:] [:upper:])
 OSLOWER = $(shell uname -s 2>/dev/null | tr [:upper:] [:lower:])
@@ -90,12 +92,12 @@ SRCS=$(wildcard *.c)
 CPP_SRCS=$(wildcard *.cpp)
 CU_SRCS=$(wildcard *.cu)
 OBJS=$(SRCS:.c=.o) $(CPP_SRCS:.cpp=.o)  $(CU_SRCS:.cu=.o)
-EXE=matrixmul
+EXE=mobilenetv2
 
 #Target Rules
 
 $(EXE):$(OBJS)
-	$(CC) $(INCLUDES) $(OBJS) -L $(CUDA_LIB_PATH) -l$(CL_LIBS) $(LDFLAGS) $(EXTRA_LDFLAGS) -o $(EXE)
+	$(CC) $(INCLUDES) $(OBJS) -L $(CUDA_LIB_PATH) -l$(CL_LIBS) -lpng $(LDFLAGS) $(EXTRA_LDFLAGS) -o $(EXE)
 
 %.o:%.cpp
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
@@ -106,5 +108,12 @@ $(EXE):$(OBJS)
 %.o:%.cu
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(INCLUDES) -c $< -o $@
 
+.PHONY:check
+check:converted_$(basename $(notdir $(word 1,$(IMAGE_URLS)))).png $(EXE)
+	./$(EXE) $< | tee $@
+	@grep -q "Detected class: $(strip $(word 1, $(CLASS_IDX)))" $@ && printf "$(GREEN)correctly identified image $<$(NC)\n" ||  printf "$(RED)Did not correctly identify image $<$(NC)\n"
+
 clean:
 	rm -rf $(OBJS) $(CU_OBJS) $(EXE)
+
+
