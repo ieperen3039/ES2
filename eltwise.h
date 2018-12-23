@@ -2,15 +2,13 @@
 #define ELTWISE_H
 #include "blob.h"
 
-typedef enum{
-    EW_MAX,
-    EW_SUM,
-    EW_PROD
-}eltwise_operation_t;
+typedef enum {
+	EW_MAX, EW_SUM, EW_PROD
+} eltwise_operation_t;
 
-typedef struct{
-    eltwise_operation_t type;
-}eltwise_param_t;
+typedef struct {
+	eltwise_operation_t type;
+} eltwise_param_t;
 
 //perform elementwise operation
 BLOB* eltwise(BLOB** in_arr, eltwise_param_t* p);

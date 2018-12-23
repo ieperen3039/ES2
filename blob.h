@@ -15,13 +15,12 @@
 #endif
 ////////////////////////////////
 
-
 //Basic blob datastructure
 typedef struct {
-    float* data;
-    int w; //width
-    int h; //height
-    int d; //depth
+	float* data;
+	int w; //width
+	int h; //height
+	int d; //depth
 } BLOB;
 
 //access element of blob
@@ -46,10 +45,10 @@ BLOB* blob_calloc(int d, int h, int w);
 BLOB* blob_duplicate(BLOB* b);
 
 //write blob to text file
-void  blob_write_txt(const char* fname, BLOB* b);
+void blob_write_txt(const char* fname, BLOB* b);
 
 //write blob to binary file
-void  blob_write_bin(const char* fname, BLOB* b);
+void blob_write_bin(const char* fname, BLOB* b);
 
 //load blob from text file
 BLOB* blob_read_txt(const char* fname);

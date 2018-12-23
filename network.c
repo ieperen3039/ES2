@@ -7,115 +7,107 @@
 
 #ifndef SILENT
 //mapping of layer_type enum to strings
-static const char* layer_type_str[4] ={
-    "convolution",
-    "element wise",
-    "pooling",
-    "none",
-};
+static const char* layer_type_str[4] = { "convolution", "element wise",
+		"pooling", "none", };
 #endif //SILENT
 
-BLOB* network(Network* net, BLOB* input){
+BLOB* network(Network* net, BLOB* input) {
 
-    //get number of layers in the network
-    int num_layers=0;
-    while(net->layers[num_layers].type!=NONE) num_layers++;
+	//get number of layers in the network
+	int num_layers = 0;
+	while (net->layers[num_layers].type != NONE) {
+		num_layers++;
+	}
 
-    //create placeholder for all layer blobs
-    BLOB** layer_blobs=(BLOB**)malloc(sizeof(BLOB*)*(num_layers+1));
+	//create placeholder for all layer blobs
+	BLOB** layer_blobs = (BLOB**) malloc(sizeof(BLOB*) * (num_layers + 1));
 
-    //insert input layer
-    layer_blobs[0]=input;
+	//insert input layer
+	layer_blobs[0] = input;
 
-    //iterate through the layers in the network
-    for(int l=0;l<num_layers;l++){
+	//iterate through the layers in the network
+	for (int l = 0; l < num_layers; l++) {
 
-        //select layer "l" from the network
-        layer_t layer=net->layers[l];
+		//select layer "l" from the network
+		layer_t layer = net->layers[l];
 
-        //blobl pointer to hold output of this layer
-        BLOB* out=NULL;
+		//blobl pointer to hold output of this layer
+		BLOB* out = NULL;
 
-        //wrapping the whole layer evaluation in a named timer object
-        timeit_named(layer.name,
+		//wrapping the whole layer evaluation in a named timer object
+		TIMEIT_NAMED(layer.name,
+				//in verbose mode print some progress to the user
+				info("Performing %s operation of layer %s\n",
+				layer_type_str[layer.type],
+				layer.name);
 
-            //in verbose mode print some progress to the user
-            info("Performing %s operation of layer %s\n", layer_type_str[layer.type], layer.name);
+				//depending on type the actions differ
+				switch(layer.type) {
+				case CONVOLUTION:
+					out = convolution( layer_blobs[layer.input],
+							&(layer.param.conv) );
+					break;
+				case ELTWISE:
+					out = eltwise2( layer_blobs[layer.input],
+							layer_blobs[layer.input2],
+							&(layer.param.eltwise) );
+					break;
+				case POOLING:
+					out = pooling( layer_blobs[layer.input],
+							&(layer.param.pool) );
+					break;
+				case NONE:
+					//last layer in the list - Note: should never reach here
+					out = NULL;
+					break;
+				}
 
-            //depending on type the actions differ
-            switch(layer.type){
-                case CONVOLUTION:
-                    out = convolution(
-                        layer_blobs[layer.input],
-                        &(layer.param.conv)
-                    );
-                break;
+				)
+		//end of timer wrapper
 
-                case ELTWISE:
-                    out = eltwise2(
-                        layer_blobs[layer.input],
-                        layer_blobs[layer.input2],
-                        &(layer.param.eltwise)
-                    );
+		//store out in the blob holding structure to be used by future layers
+		//NOTE: currently all blobs are stored until the network is fully evaluated,
+		//with smarter management this storage could be reduced significantly
+		if (out != NULL) {
+			layer_blobs[l + 1] = out;
+		}
 
-                break;
+#ifdef DEBUG
+		if(out) {
+			// Some example on how to use the blob IO routines
+			// Can be very useful to debug problems in the output of your network
 
-                case POOLING:
-                    out = pooling(
-                        layer_blobs[layer.input],
-                        &(layer.param.pool)
-                    );
-                break;
+			//create a name for the output file
+			char* fname = (char*) malloc(sizeof(char)*strlen(layer.name)+5);
+			sprintf(fname, "%s.txt", layer.name);
 
-                case NONE:
-                    //last layer in the list - Note: should never reach here
-                    out=NULL;
-                break;
-            }
+			//write to file
+			blob_write_txt(fname, out);//text version
+			//blob_write_bin(fname, layer_blobs[l+1]);  //binary version
 
-        )//end of timer wrapper
+			//read from file
+			//out=blob_read_txt(fname);  //text version
+			//out=blob_read_bin(fname);  //binary version
 
-        //store out in the blob holding structure to be used by future layers
-        //NOTE: currently all blobs are stored until the network is fully evaluated,
-        //with smarter management this storage could be reduced significantly
-        if(out!=NULL)
-            layer_blobs[l+1]=out;
+			//free the file name
+			free(fname);
+		}
+#endif //DEBUG
 
-        #ifdef DEBUG
-        if(out){
-            // Some example on how to use the blob IO routines
-            // Can be very useful to debug problems in the output of your network
+	}
+	//done evaluating the network
 
-            //create a name for the output file
-            char* fname = (char*) malloc(sizeof(char)*strlen(layer.name)+5);
-            sprintf(fname, "%s.txt", layer.name);
+	//extract output blob pointer
+	BLOB* out = layer_blobs[num_layers];
 
-            //write to file
-            blob_write_txt(fname, out);                 //text version
-            //blob_write_bin(fname, layer_blobs[l+1]);  //binary version
+	//clean up all intermediate blobs
+	for (int i = 1; i < num_layers; i++) {
+		blob_free(layer_blobs[i]);
+	}
 
-            //read from file
-            //out=blob_read_txt(fname);  //text version
-            //out=blob_read_bin(fname);  //binary version
+	//clean up layer blob structure (note: only structure, data is managed by caller)
+	free(layer_blobs);
 
-            //free the file name
-            free(fname);
-        }
-        #endif //DEBUG
-
-    }
-    //done evaluating the network
-
-    //extract output blob pointer
-    BLOB* out = layer_blobs[num_layers];
-
-    //clean up all intermediate blobs
-    for(int i=1;i<num_layers;i++)
-        blob_free(layer_blobs[i]);
-
-    //clean up layer blob structure (note: only structure, data is managed by caller)
-    free(layer_blobs);
-
-    //return the output blob
-    return out;
+	//return the output blob
+	return out;
 }

@@ -28,15 +28,13 @@ void timer_destroy();
 //time with empty name
 #define timeit(func) timeit_named("", func);
 
-
 #else
 
 //Dummy defines - nothing will be timed
-#define timeit_named(name, func) func
-#define timeit(func) func
+#define TIMEIT_NAMED(name, func) func
+#define TIMEIT(func) func
 
 #endif
-
 
 ///////////////////////////////////////
 //example usage of the 'timeit' macro
