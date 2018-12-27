@@ -4,7 +4,6 @@
 #include "image_util.h"
 #include "network.h"
 #include "mobilenetv2.h"
-#include "logging.h"
 #include "preprocessing.h"
 #include "timer.h"
 
@@ -23,7 +22,8 @@ int argmax(BLOB* b) {
 
 int main(int argc, char* argv[]) {
 	if (argc != 2 || !strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")) {
-		error("Usage: %s <input.png>\n", argv[0]);
+		printf("Usage: %s <input.png>\n", argv[0]);
+        exit(1);
 	}
 
 #ifndef SILENT
@@ -32,16 +32,16 @@ int main(int argc, char* argv[]) {
 #endif
 
 	//read png into image structure
-	info("Loading image %s\n", argv[1]);
+	printf("Loading image %s\n", argv[1]);
 	BLOB* img = read_png(argv[1]);
 
 	//Do preprocessing of the image
-	info("Preprocessing image\n");
+	printf("Preprocessing image\n");
 
 	cpu_preprocess(img);
 
 	//perform inference
-	info("Performing inference\n");
+	printf("Performing inference\n");
 
 	//warp a timer around the network evaluation
 	TIMEIT_NAMED("Complete Network",
@@ -52,7 +52,8 @@ int main(int argc, char* argv[]) {
 	//get class index of maximum
 	int class_idx = argmax(out);
 	if (!(class_idx >= 0 && class_idx <= 999)) {
-		error("provided class index (%d) is out of bounds!\n", class_idx);
+        printf("ERROR: provided class index (%d) is out of bounds!\n", class_idx);
+        exit(1);
 	}
 
 	//print the class index

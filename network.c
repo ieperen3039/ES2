@@ -37,7 +37,7 @@ BLOB* network(Network* net, BLOB* input) {
 		//wrapping the whole layer evaluation in a named timer object
 		TIMEIT_NAMED(layer.name,
 				//in verbose mode print some progress to the user
-				info("Performing %s operation of layer %s\n",
+				printf("Performing %s operation of layer %s\n",
 				layer_type_str[layer.type],
 				layer.name);
 

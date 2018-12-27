@@ -28,7 +28,8 @@ BLOB* load_weights(BLOB* b, conv_param_t* p) {
 	//open weights file for reading
 	FILE* fp = fopen(p->weights, "rb");
 	if (fp == NULL) {
-		error("could not open file %s for reading\n", p->weights);
+		printf("ERROR could not open file %s for reading\n", p->weights);
+        exit(1);
 	}
 
 	//for fully connected layers the kernel size is equal to the input size
@@ -51,7 +52,8 @@ BLOB* load_weights(BLOB* b, conv_param_t* p) {
 				if ((int) fread(
 						&(blob_data(w, o, i - g * (b->d / p->group), 0)),
 						sizeof(float), Ky * Kx, fp) != Ky * Kx) {
-					error("loading weights from file %s\n", p->weights);
+                    printf("ERROR: loading weights from file %s\n", p->weights);
+                    exit(1);
 				}
 			}
 		}
@@ -69,13 +71,15 @@ float* load_1d(const char* fname, size_t num) {
 	//open file for reading
 	FILE* fp = fopen(fname, "rb");
 	if (fp == NULL) {
-		error("could not open file %s for reading\n", fname);
+        printf("ERROR: could not open file %s for reading\n", fname);
+        exit(1);
 	}
 
 	//read in array
 	float* arr = (float*) malloc(sizeof(float) * num);
 	if (fread(arr, sizeof(float), num, fp) != num) {
-		error("loading data from file %s\n", fname);
+        printf("ERROR: loading data from file %s\n", fname);
+        exit(1);
 	}
 
 	//close file

@@ -28,26 +28,33 @@
 #include "image_util.h"
 #include <stdlib.h>
 #include <png.h>
-#include "logging.h"
 
 BLOB* read_png(const char *filename) {
 	FILE *fp = fopen(filename, "rb");
-	if (fp == NULL)
-		error("Could not open %s for reading\n", filename);
+    if (fp == NULL) {
+        printf("ERROR: Could not open %s for reading\n", filename);
+        exit(1);
+    }
 
 	//create png struct
 	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL,
 			NULL);
-	if (!png)
-		error("Could not read png file %s\n", filename);
+    if (!png) {
+        printf("ERROR: Could not read png file %s\n", filename);
+        exit(1);
+    }
 
 	//create png info
 	png_infop info = png_create_info_struct(png);
-	if (!info)
-		error("Problem creating png info structure\n");
+    if (!info) {
+        error("ERROR: Problem creating png info structure\n");
+        exit(1);
+    }
 
-	if (setjmp(png_jmpbuf(png)))
-		error("Problem with 'setjmp'");
+    if (setjmp(png_jmpbuf(png))) {
+        printf("ERROR: Problem with 'setjmp'");
+        exit(1);
+    }
 
 	//read the png data
 	png_init_io(png, fp);
@@ -127,20 +134,27 @@ BLOB* read_png(const char *filename) {
 bool write_png(const char *filename, BLOB* img) {
 
 	FILE *fp = fopen(filename, "wb");
-	if (!fp)
-		error("Error opening file %s for writing\n", filename);
+    if (!fp) {
+        printf("ERROR: Error opening file %s for writing\n", filename);
+        exit(1);
+    }
 
-	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL,
-			NULL);
-	if (!png)
-		error("Error creating png write structure\n");
+	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (!png) {
+		printf("ERROR: Error creating png write structure\n");
+        exit(1);
+    }
 
 	png_infop info = png_create_info_struct(png);
-	if (!info)
-		error("Error creating png info structure\n");
+    if (!info) {
+		printf("ERROR: Error creating png info structure\n");
+        exit(1);
+    }
 
-	if (setjmp(png_jmpbuf(png)))
-		error("Error with setjmp function\n");
+    if (setjmp(png_jmpbuf(png))) {
+		printf("ERROR: Error with setjmp function\n");
+        exit(1);
+    }
 
 	//init the io
 	png_init_io(png, fp);

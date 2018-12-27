@@ -18,8 +18,10 @@ void timer_start() {
 			sizeof(timer_stack_item_t) * sp);
 
 	//start timing
-	if (gettimeofday(&(stack[sp - 1].start), NULL))
-		error("starting timer\n");
+    if (gettimeofday(&(stack[sp - 1].start), NULL)) {
+        printf("ERROR: starting timer\n");
+        exit(1);
+    }
 	stack[sp - 1].us = -1;
 }
 
@@ -30,8 +32,10 @@ long int timer_get() {
 
 	//else get current timing
 	struct timeval stop;
-	if (gettimeofday(&stop, NULL))
-		error("getting current time\n");
+    if (gettimeofday(&stop, NULL)) {
+        printf("ERROR: getting current time\n");
+        exit(1);
+    }
 
 	//return us
 	return (long int) ((stop.tv_sec - stack[sp - 1].start.tv_sec) * 1000000)

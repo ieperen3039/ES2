@@ -1,6 +1,5 @@
 #ifndef TIMER_H
 #define TIMER_H
-#include "logging.h"
 
 //function to start a new timer
 //note that timers can be nested!
@@ -19,10 +18,10 @@ void timer_destroy();
 
 //timeit macro to be wrapped around what should be timed
 #define timeit_named(name, func) \
-    info("Starting timer %s\n----------\n", name);\
+    printf("Starting timer %s\n----------\n", name);\
     timer_start();\
     func;\
-    info("----------\nEnding timer %s\nTime taken: %ld us (%lf seconds)\n",name, timer_stop(), (double)timer_stop()/1000000.0 );\
+    printf("----------\nEnding timer %s\nTime taken: %ld us (%lf seconds)\n",name, timer_stop(), (double)timer_stop()/1000000.0 );\
     timer_destroy();
 
 //time with empty name
@@ -41,9 +40,9 @@ void timer_destroy();
 
 //#include <unistd.h> //include for sleep
 //timeit(
-//    info("Toplevel timer\n");
+//    printf("Toplevel timer\n");
 //    timeit(
-//        info("inner timer\n");
+//        printf("inner timer\n");
 //        sleep(1);
 //    );
 //    sleep(1);
