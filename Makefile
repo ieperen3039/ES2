@@ -105,7 +105,7 @@ check: converted_$(basename $(notdir $(word 1,$(IMAGE_URLS)))).png $(EXE)
 
 .PRECIOUS:$(EXE)
 $(EXE):$(OBJS)
-	$(CC) $(INCLUDES) $(OBJS) -L $(CUDA_LIB_PATH) -framework $(CL_LIBS) -lpng $(LDFLAGS) $(EXTRA_LDFLAGS) -o $(EXE)
+	$(CC) $(INCLUDES) $(OBJS) -L $(CUDA_LIB_PATH) -l$(CL_LIBS) -lpng $(LDFLAGS) $(EXTRA_LDFLAGS) -o $(EXE)
 
 %.o:%.cpp
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@

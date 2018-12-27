@@ -8,3 +8,4 @@ check*
 mobilenetv2
 .DS_Store
 *.xcworkspace
+Makefile
