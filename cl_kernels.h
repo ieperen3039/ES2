@@ -1,0 +1,24 @@
+//
+//  cl_setup.h
+//  
+//
+//  Created by Jorrit Olthuis on 27/12/2018.
+//
+
+#ifndef cl_setup_h
+#define cl_setup_h
+
+#include <stdio.h>
+#include <OpenCL/cl.h>
+
+cl_struct* init_device(char* kernel);
+void close_device(cl_struct* kernel_objects);
+
+typedef struct {
+    cl_device_id        device_id; // Compute device ID
+    cl_context          context; // Compute context
+    cl_command_queue    commands; // Compute command queue
+    cl_kernel           kernel; // Compute kernel
+} cl_struct;
+
+#endif /* cl_setup_h */
