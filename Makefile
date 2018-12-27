@@ -1,5 +1,3 @@
-include images.mk
-
 # OS Name (Linux or Darwin)
 OSUPPER = $(shell uname -s 2>/dev/null | tr [:lower:] [:upper:])
 OSLOWER = $(shell uname -s 2>/dev/null | tr [:upper:] [:lower:])
@@ -96,8 +94,18 @@ EXE=mobilenetv2
 
 #Target Rules
 
+default:check
+
+include images.mk
+
+.PHONY:check
+check: converted_$(basename $(notdir $(word 1,$(IMAGE_URLS)))).png $(EXE)
+	./$(EXE) $< | tee $@
+	@grep -q "Detected class: $(strip $(word 1, $(CLASS_IDX)))" $@ && printf "$(GREEN)correctly identified iimage $<$(NC)\n"
+
+.PRECIOUS:$(EXE)
 $(EXE):$(OBJS)
-	$(CC) $(INCLUDES) $(OBJS) -L $(CUDA_LIB_PATH) -l$(CL_LIBS) -lpng $(LDFLAGS) $(EXTRA_LDFLAGS) -o $(EXE)
+	$(CC) $(INCLUDES) $(OBJS) -L $(CUDA_LIB_PATH) -framework $(CL_LIBS) -lpng $(LDFLAGS) $(EXTRA_LDFLAGS) -o $(EXE)
 
 %.o:%.cpp
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
@@ -108,12 +116,35 @@ $(EXE):$(OBJS)
 %.o:%.cu
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(INCLUDES) -c $< -o $@
 
-.PHONY:check
-check:converted_$(basename $(notdir $(word 1,$(IMAGE_URLS)))).png $(EXE)
-	./$(EXE) $< | tee $@
-	@grep -q "Detected class: $(strip $(word 1, $(CLASS_IDX)))" $@ && printf "$(GREEN)correctly identified image $<$(NC)\n" ||  printf "$(RED)Did not correctly identify image $<$(NC)\n"
-
 clean:
 	rm -rf $(OBJS) $(CU_OBJS) $(EXE)
 
+#Create an archive of the code
+USER=$(shell whoami)
+ZIPFILE=$(USER).zip
+zip:$(ZIPFILE)
+$(ZIPFILE):clean
+	zip -r $@ ./* -x ./bins/*
+
+#build dependency files if we are not cleaning
+ifneq ($(filter clean,$(MAKECMDGOALS)),clean)
+-include $(DEPS)
+endif
+
+CLEAN=$(OBJS) $(DEPS) $(EXE) check $(ZIPFILE)
+
+#downloaded images
+CLEAN+=$(foreach URL, $(IMAGE_URLS), $(notdir $(URL)))
+
+#converted images
+CLEAN+=$(foreach URL, $(IMAGE_URLS), converted_$(basename $(notdir $(URL))).png)
+
+#check files
+CLEAN+=$(foreach URL, $(IMAGE_URLS), check_$(basename $(notdir $(URL))))
+
+
+ifdef DEBUG
+#add extra cleanup when debug is set (to clean up dumped blobs)
+CLEAN+= *.txt *.bin
+endif
 
