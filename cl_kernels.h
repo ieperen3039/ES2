@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <OpenCL/cl.h>
 
-cl_struct* init_device(char* kernel);
+cl_struct* init_device(char* kernel_path, char* name);
 void close_device(cl_struct* kernel_objects);
 
 typedef struct {
