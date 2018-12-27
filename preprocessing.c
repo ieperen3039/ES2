@@ -1,5 +1,8 @@
+#include <OpenCL/cl.h>
+
 #include "preprocessing.h"
-#include "logging.h"
+#include "cl_kernels.h"
+#include "preprocessing_kernel.c"
 
 //CPU version
 void cpu_preprocess(BLOB* img) {
@@ -14,55 +17,7 @@ void cpu_preprocess(BLOB* img) {
 	}
 }
 
-//GPU kernel code
-__kernel void gpu_device_preprocess(float* data_in, float* data_out){
-    //This code gets executed by each thread in the GPU
-    //First step is identifying which thread we are
-    
-    // The ids of this thread within our block (commented here since this particular kernel doesn't need them)
-    //unsigned int local_x = threadIdx.x; //x coordinate *within* the block this thread maps to
-    //unsigned int local_y = threadIdx.y; //y coordinate *within* the block this thread maps to
-    //unsigned int local_z = threadIdx.z; //z coordinate *within* the block this thread maps to
-    
-    // The global ids (where is this thread in the total grid)
-    unsigned int global_x = blockIdx.x*blockDim.x + threadIdx.x;  //blockid*width_of_a_block + local_x
-    unsigned int global_y = blockIdx.y*blockDim.y + threadIdx.y;
-    unsigned int global_z = blockIdx.z*blockDim.z + threadIdx.z; //NOTE: gridDim.z==1 and thus blockIdx.z==0 in this example!
-    
-    //The image height and width can be passed as an argument to this kernel, but they
-    //can also be derived by using the grid and block dimensions in this case
-    unsigned int img_width  = gridDim.x*blockDim.x;
-    unsigned int img_height = gridDim.y*blockDim.y;
-    
-    //load single pixel from global memory into register
-    //HINT: the global memory is very slow, so if you have multiple uses of the same pixel, it might be smart to look into the "shared memory".
-    //Here however there is only one use of each pixel, so nothing to be gained from using shared memory
-    float value = data_in[ global_z*img_height*img_width + global_y*img_width + global_x];
-    
-    //each channel (Z) needs to correct with a different mean value
-    float mean[3]={
-        123.680f,
-        116.779f,
-        103.939f
-    };
-    
-    /* correct by subtracting the correct mean for this channel and scaling by a factor 0.017 */
-    value = (value-mean[global_z]) * 0.017f;
-    
-    /*
-    Time to commit the value to the global memory.
-    Note that we swap RGB to BGR (2-z), as required by the preprocessing.
-    If we did not need to swap, it would have been possible to just overwrite the input (compute in-place). However, now
-     that we swap, we might destroy the input data of another thread, hence synchronisation or an extra output buffer is
-     required. Since synchronisation between threadblocks is costly, and the global memory is large hence we just
-     allocated an extra output buffer for this example
-     */
-    int index = (2-global_z)*img_width*img_height + global_y*img_width + global_x;
-    data_out[index] = value;
-}
-
-
-//GPU host code (called from the CPU, copies data back and forth and launched the GPU thread)
+//GPU host code (called from the CPU, copies data back and forth and launches the GPU thread)
 void gpu_preprocess(BLOB* img){
     /*
      The high level strategy is to map the pixels of the image to threads in the GPU, and have each thread preprocess a single pixel.
@@ -75,6 +30,9 @@ void gpu_preprocess(BLOB* img){
      dimension is already captured inside the threadblock
      */
     
+/***********
+    // CUDA code, has not directly been converted to something in OpenCL
+    
     // Divide the X and Y dimensions of the image into a number of blocks here
     int numBlocksX=16;
     int numBlocksY=16;
@@ -84,49 +42,75 @@ void gpu_preprocess(BLOB* img){
     int threadsPerBlockY=img->h/numBlocksY;  //NOTE: this should have remainder==0 for this code!!
     //int threadsPerBlockZ=3;                //not required, but correct ;)
     
-    info("Grid dimensions %d x %d (x 1)\n", numBlocksX,numBlocksY);
-    info("Block dimensions %d x %d x 3\n", threadsPerBlockX,threadsPerBlockY);
+    printf("Grid dimensions %d x %d (x 1)\n", numBlocksX,numBlocksY);
+    printf("Block dimensions %d x %d x 3\n", threadsPerBlockX,threadsPerBlockY);
     
     //To specify the grid and block dimensions, cuda uses this special "dim3" datatype.
     //Note that our grid is actually only 2D (as far as we are concerned), so we set the z-dimension to be 1
     dim3 grid( numBlocksX, numBlocksY, 1 );             // numBlocksX x numBlocksY ( x 1)
     dim3 block(threadsPerBlockX, threadsPerBlockY, 3);  // threadsPerBlockX x threadsPerBlockY x 3
+ 
+ ***********/
+    
+    /* Initialise OpenCL kernel */
+    // Note: this is only possible because the kernel environment is on the heap
+    cl_struct* p_kernel_env = init_device("preprocessing_kernel.c", "preproc");
     
     /* Copy image data from the CPU to the GPUs global memory */
     
-    // Create a pointer to data on the GPU
-    float* device_data;
-
-    // Return values of cuda functions, for error checking
-    cudaError_t err;
+    // Prepare memory
+    size_t blob_size = blob_bytes(img);
     
-    // malloc() space on the on the GPU
-    err=cudaMalloc(&device_data, blob_bytes(img));
+    // Set arguments
+    // TODO: blob shouldn't be read directly, it should be converted by clCreateBuffer()
+    int err = CL_SUCCESS;
+    err |= clSetKernelArg(p_kernel_env->kernel, 0, blob_size, NULL); // Output pointer
+    err |= clSetKernelArg(p_kernel_env->kernel, 1, blob_size, (void *)&img->data); // Blob input
     
-    // Check for errors (NOTE: this is not a standard cuda function. Check logging.h)
-    cudaCheckError(err)
+    if(err != CL_SUCCESS) {
+        printf("Error: Failed to set kernel arguments! %d\n", err);
+        exit(1);
+    }
     
-    // Copy the image data over to the GPU
-    cudaCheckError(cudaMemcpy(device_data, img->data, blob_bytes(img), cudaMemcpyHostToDevice));
+    /* Perform the preprocessing on the GPU */
     
-    // Allocate buffer for output
-    float* device_out;
-    cudaCheckError(cudaMalloc(&device_out, blob_bytes(img)));
+    size_t work_dim = 2;
+    cl_uint global_work_size[work_dim] = {-1, -1}; // TODO: fill with values that make sense
+    cl_uint local_work_size[work_dim] = {-1, -1};
     
-    // Perform the preprocessing on the GPU
-    info("Preprocessing on GPU...\n");
-    gpu_device_preprocess<<< grid, block >>>(device_data, device_out);
+    printf("Preprocessing on GPU...\n");
     
-    // Use "peekatlasterror" since a kernel launch does not return a cudaError_t to check for errors
-    cudaCheckError(cudaPeekAtLastError());
+    err = clEnqueueNDRangeKernel(p_kernel_env->commands,    // Command queue
+                                 p_kernel_env->kernel,      // Kernel code
+                                 work_dim,
+                                 NULL,                      // global_work_offset, must be NULL according to documentation
+                                 &global_work_size,
+                                 &local_work_size,
+                                 0, NULL, NULL);            // There are no events we need to wait for, before we can start
     
-    // Copy the processed image data back from GPU global memory to CPU memory
-    cudaCheckError(cudaMemcpy(img->data, device_out, blob_bytes(img), cudaMemcpyDeviceToHost));
+    if (err != CL_SUCCESS) {
+        printf("Error: Failed to execute kernel! %d\n", err);
+        exit(1);
+    }
     
-    // Free the allocated GPU memory that holds the output
-    cudaCheckError(cudaFree(device_out));
+    /* Read output */
     
-    // Release the space that holds the input on the GPU
-    cudaCheckError(cudaFree(device_data));
+    // Load result from __local memory
+    BLOB result_blob;
+    err = clEnqueueReadBuffer(p_kernel_env->commands,   // Command queue
+                              &output_blob,             // Pointer to output arg from clCreateBuffer(), TODO
+                              CL_TRUE,                  // Blocking read
+                              0,                        // Read offset
+                              blob_size,                // Number of bytes to read
+                              &result_blob,             // Buffer to read data into
+                              0, NULL, NULL);           // No events
     
+    if (err != CL_SUCCESS)
+    {
+        printf("Error: Failed to read output array! %d\n", err);
+        exit(1);
+    }
+    
+    /* Release memory */
+    close_device(p_kernel_env)
 }

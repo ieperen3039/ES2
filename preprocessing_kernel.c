@@ -6,7 +6,7 @@
 //
 
 //GPU kernel code
-__kernel void gpu_device_preprocess(float* data_in, float* data_out){
+__kernel void gpu_device_preprocess(__local BLOB* output_blob, __local BLOB* input_blob){
     //This code gets executed by each thread in the GPU
     //First step is identifying which thread we are
     
