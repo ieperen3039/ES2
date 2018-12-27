@@ -132,19 +132,27 @@ BLOB* convolution(BLOB* input, conv_param_t* p) {
 
 	//perform convolution
 	for (int g = 0; g < p->group; g++) {
+        /* G:  Iterate over the number of groups (whatever a group is) */
 		for (int o = g * (out->d / p->group);
 				o < (g + 1) * (out->d / p->group);
 				o++) {
+            /* O: Iterate over the output 'slices' (in the depth direction) within group G */
 			for (int i = g * (in->d / p->group);
 					i < (g + 1) * (in->d / p->group);
 					i++) {
+                /* O: Iterate over the input 'slices' (in the depth direction) within group G */
 				for (int m = 0; m < out->h; m++) {
+                    /* M: Iterate over the rows (height) of slice O */
 					for (int n = 0; n < out->w; n++) {
+                        /* N: Iterate over the cells in row M */
+                        
+                        // Calculate dot product by using kernels (for us 1x1 or 3x3)
 						for (int k = 0; k < Ky; k++) {
 							for (int l = 0; l < Kx; l++) {
-								//note: absolute starting i is subtracted for the weights, see load_weights function for more info
-								blob_data(out,o,m,n) += blob_data(in, i, m*p->Sy+k, n*p->Sx+l) *
-										blob_data(w, o, i-(g*(in->d/p->group)), k*Kx + l);
+								/* note: absolute starting i is subtracted for
+                                 the weights, see load_weights function for more info */
+								blob_data(out,o,m,n) += blob_data(in, i, m*(p->Sy)+k,            n*(p->Sx)+l) *
+                                                        blob_data(w,  o, i-(g*(in->d/p->group)), k*Kx + l   );
 							}
 						}
 					}
@@ -157,8 +165,9 @@ BLOB* convolution(BLOB* input, conv_param_t* p) {
 	blob_free(w);
 
 	//done with padded blob, free
-	if (p->pad != 0)
+    if (p->pad != 0) {
 		blob_free(in);
+    }
 
 	//perform batchnorm if needed
 	if (p->bn_mean != NULL) {
