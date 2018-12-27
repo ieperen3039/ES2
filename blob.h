@@ -1,20 +1,6 @@
 #ifndef BLOB_H
 #define BLOB_H
 
-/////////////////////////////////
-//Some GPU helper functions
-#ifdef __NVCC__
-#include "logging.h"
-
-//Copy blob to GPU
-#define blob2gpu(gpu_ptr, blob) {cudaCheckError(cudaMalloc(&gpu_ptr, blob_bytes(blob))); cudaCheckError(cudaMemcpy((gpu_ptr), (blob)->data, blob_bytes(blob), cudaMemcpyHostToDevice));}
-
-//Copy gpu data back to blob
-#define gpu2blob(blob, gpu_ptr) {cudaCheckError(cudaMemcpy((blob)->data, gpu_ptr, blob_bytes(blob), cudaMemcpyDeviceToHost)); cudaCheckError(cudaFree(gpu_ptr));}
-
-#endif
-////////////////////////////////
-
 //Basic blob datastructure
 typedef struct {
 	float* data;
