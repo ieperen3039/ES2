@@ -1,5 +1,5 @@
 //
-//  preprocessing_kernel.c
+//  preprocessing_kernel.cl
 //  
 //
 //  Created by Jorrit Olthuis on 27/12/2018.
