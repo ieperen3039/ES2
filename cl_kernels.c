@@ -73,8 +73,10 @@ cl_struct* init_device(char* kernel_path, char* name)
     if (err != CL_SUCCESS)
     {
         size_t len;
-        char buffer[2048];
-        printf("Error: Failed to build program executable!\n");
+        char buffer[16384];
+        printf("Error: Failed to build program executable! %d\n", err);
+        // Determine which error is returned:
+        //printf("%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n", CL_INVALID_PROGRAM, CL_INVALID_VALUE, CL_INVALID_DEVICE, CL_INVALID_BINARY, CL_INVALID_BUILD_OPTIONS, CL_INVALID_OPERATION, CL_COMPILER_NOT_AVAILABLE, CL_DEVICE_COMPILER_AVAILABLE, CL_BUILD_PROGRAM_FAILURE, CL_INVALID_OPERATION, CL_OUT_OF_HOST_MEMORY);
         clGetProgramBuildInfo(output.program, output.device_id, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
         printf("%s\n", buffer);
         exit(1);
