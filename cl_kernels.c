@@ -18,7 +18,9 @@ static long LoadOpenCLKernel(char const* , char**);
  */
 cl_struct* init_device(char* kernel_path, char* name)
 {
-    cl_struct output;
+    // Allocate memory on the heap
+    cl_struct* p_output = (cl_struct *) malloc(sizeof(cl_struct));
+    cl_struct output = *p_output;
     
     cl_uint dev_cnt = 0;
     clGetPlatformIDs(0, 0, &dev_cnt);
@@ -90,6 +92,8 @@ cl_struct* init_device(char* kernel_path, char* name)
         printf("Error: Failed to create compute kernel!\n");
         exit(1);
     }
+    
+    return p_output;
 }
 
 /** Releases memory objects of kernel_objects */
@@ -99,6 +103,8 @@ void close_device(cl_struct* kernel_objects)
     clReleaseKernel(kernel_objects->kernel);
     clReleaseCommandQueue(kernel_objects->commands);
     clReleaseContext(kernel_objects->context);
+    
+    free(kernel_objects);
 }
 
 static long LoadOpenCLKernel(char const* path, char **buf)
