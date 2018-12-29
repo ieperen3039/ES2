@@ -5,7 +5,7 @@
 //  Created by Jorrit Olthuis on 27/12/2018.
 //
 
-#include "cl_setup.h"
+#include "cl_kernels.h"
 
 /** Sets up OpenCL stuff to be able to run kernel_path
     - Detects devices

@@ -2,7 +2,6 @@
 #include <string.h>
 #include "blob.h"
 #include <stdio.h>
-#include "logging.h"
 
 typedef struct {
 	int d;
