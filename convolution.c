@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "logging.h"
 
 //add padding to blob
 BLOB* pad(BLOB* in, int pad) {

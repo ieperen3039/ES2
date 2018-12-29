@@ -47,7 +47,7 @@ BLOB* read_png(const char *filename) {
 	//create png info
 	png_infop info = png_create_info_struct(png);
     if (!info) {
-        error("ERROR: Problem creating png info structure\n");
+        printf("ERROR: Problem creating png info structure\n");
         exit(1);
     }
 

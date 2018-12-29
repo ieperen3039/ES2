@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-#include "logging.h"
 
 //perform  pooling
 BLOB* pooling(BLOB* in, pool_param_t* p) {
