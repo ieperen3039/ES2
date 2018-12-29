@@ -18,6 +18,7 @@ typedef struct {
     cl_device_id        device_id; // Compute device ID
     cl_context          context; // Compute context
     cl_command_queue    commands; // Compute command queue
+    cl_program          program; // Compute program
     cl_kernel           kernel; // Compute kernel
 } cl_struct;
 

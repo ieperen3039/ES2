@@ -59,29 +59,29 @@ cl_struct* init_device(char* kernel_path, char* name)
         return 1;
     }
     
-    program = clCreateProgramWithSource(output.context, 1, (const char **) & KernelSource, NULL, &err);
-    if (!program)
+    output.program = clCreateProgramWithSource(output.context, 1, (const char **) & KernelSource, NULL, &err);
+    if (!output.program)
     {
         printf("Error: Failed to create compute program!\n");
         return EXIT_FAILURE;
     }
     
     // Build the program executable
-    err = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
+    err = clBuildProgram(output.program, 0, NULL, NULL, NULL, NULL);
     if (err != CL_SUCCESS)
     {
         size_t len;
         char buffer[2048];
         printf("Error: Failed to build program executable!\n");
-        clGetProgramBuildInfo(program, &output.device_id, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
+        clGetProgramBuildInfo(output.program, &output.device_id, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
         printf("%s\n", buffer);
         exit(1);
     }
     
     // Create the compute kernel in the program we wish to run
     //
-    output.kernel = clCreateKernel(program, name, &err);
-    if (!kernel || err != CL_SUCCESS)
+    output.kernel = clCreateKernel(output.program, name, &err);
+    if (!output.kernel || err != CL_SUCCESS)
     {
         printf("Error: Failed to create compute kernel!\n");
         exit(1);
@@ -91,8 +91,8 @@ cl_struct* init_device(char* kernel_path, char* name)
 /** Releases memory objects of kernel_objects */
 void close_device(cl_struct* kernel_objects)
 {
-    clReleaseProgram(kernel_objects.program);
-    clReleaseKernel(kernel_objects.kernel);
-    clReleaseCommandQueue(kernel_objects.commands);
-    clReleaseContext(kernel_objects.context);
+    clReleaseProgram(kernel_objects->program);
+    clReleaseKernel(kernel_objects->kernel);
+    clReleaseCommandQueue(kernel_objects->commands);
+    clReleaseContext(kernel_objects->context);
 }
