@@ -2,7 +2,6 @@
 
 #include "preprocessing.h"
 #include "cl_kernels.h"
-#include "preprocessing_kernel.c"
 
 //CPU version
 void cpu_preprocess(BLOB* img) {
@@ -30,6 +29,8 @@ void gpu_preprocess(BLOB* img){
      dimension is already captured inside the threadblock
      */
     
+    int err = CL_SUCCESS;
+    
 /***********
     // CUDA code, has not directly been converted to something in OpenCL
     
@@ -54,18 +55,38 @@ void gpu_preprocess(BLOB* img){
     
     /* Initialise OpenCL kernel */
     // Note: this is only possible because the kernel environment is on the heap
-    cl_struct* p_kernel_env = init_device("preprocessing_kernel.c", "preproc");
+    cl_struct* p_kernel_env = init_device((char *) "preprocessing_kernel.c", (char *) "preproc");
     
     /* Copy image data from the CPU to the GPUs global memory */
     
     // Prepare memory
     size_t blob_size = blob_bytes(img);
     
-    // Set arguments
-    // TODO: blob shouldn't be read directly, it should be converted by clCreateBuffer()
-    int err = CL_SUCCESS;
-    err |= clSetKernelArg(p_kernel_env->kernel, 0, blob_size, NULL); // Output pointer
-    err |= clSetKernelArg(p_kernel_env->kernel, 1, blob_size, (void *)&img->data); // Blob input
+    /* Set arguments */
+    // Output
+    cl_mem input_blob = clCreateBuffer(p_kernel_env->context,
+                                       CL_MEM_READ_ONLY,
+                                       blob_size,
+                                       NULL,
+                                       &err);
+    if(err != CL_SUCCESS) {
+        printf("Error line %d: Failed to generate buffer! %d\n", __LINE__, err);
+        exit(1);
+    }
+    // Input
+    cl_mem output_blob = clCreateBuffer(p_kernel_env->context,
+                                        CL_MEM_WRITE_ONLY | CL_MEM_COPY_HOST_PTR,
+                                        blob_size,
+                                        img->data,
+                                        &err);
+    if(err != CL_SUCCESS) {
+        printf("Error line %d: Failed to generate buffer! %d\n", __LINE__, err);
+        exit(1);
+    }
+    
+    // Set buffers as kernel arguments
+    err |= clSetKernelArg(p_kernel_env->kernel, 0, sizeof(cl_mem), (void *)&output_blob); // Output pointer
+    err |= clSetKernelArg(p_kernel_env->kernel, 1, sizeof(cl_mem), (void *)&input_blob); // Blob input
     
     if(err != CL_SUCCESS) {
         printf("Error: Failed to set kernel arguments! %d\n", err);
@@ -75,8 +96,12 @@ void gpu_preprocess(BLOB* img){
     /* Perform the preprocessing on the GPU */
     
     size_t work_dim = 2;
-    cl_uint global_work_size[work_dim] = {-1, -1}; // TODO: fill with values that make sense
-    cl_uint local_work_size[work_dim] = {-1, -1};
+    size_t global_work_size[work_dim]; // The total number of global work items is the product of all elements
+    global_work_size[0] = 1;
+    global_work_size[1] = 1;
+    size_t local_work_size[work_dim]; // The number of work items in one work group
+    local_work_size[0] = 1;
+    local_work_size[1] = 1;
     
     printf("Preprocessing on GPU...\n");
     
@@ -84,8 +109,8 @@ void gpu_preprocess(BLOB* img){
                                  p_kernel_env->kernel,      // Kernel code
                                  work_dim,
                                  NULL,                      // global_work_offset, must be NULL according to documentation
-                                 &global_work_size,
-                                 &local_work_size,
+                                 global_work_size,
+                                 local_work_size,
                                  0, NULL, NULL);            // There are no events we need to wait for, before we can start
     
     if (err != CL_SUCCESS) {
@@ -98,7 +123,7 @@ void gpu_preprocess(BLOB* img){
     // Load result from __local memory
     BLOB result_blob;
     err = clEnqueueReadBuffer(p_kernel_env->commands,   // Command queue
-                              &output_blob,             // Pointer to output arg from clCreateBuffer(), TODO
+                              output_blob,             // Pointer to output arg from clCreateBuffer(), TODO
                               CL_TRUE,                  // Blocking read
                               0,                        // Read offset
                               blob_size,                // Number of bytes to read
@@ -111,6 +136,11 @@ void gpu_preprocess(BLOB* img){
         exit(1);
     }
     
+    /*
+     TODO:
+     Do something with result_blob
+     */
+    
     /* Release memory */
-    close_device(p_kernel_env)
+    close_device(p_kernel_env);
 }

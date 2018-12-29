@@ -1,6 +1,7 @@
 #include <sys/time.h>
 #include "timer.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef struct {
 	struct timeval start;
