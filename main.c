@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 	//Do preprocessing of the image
 	printf("Preprocessing image\n");
 
-	cpu_preprocess(img);
+	gpu_preprocess(img);
 
 	//perform inference
 	printf("Performing inference\n");
