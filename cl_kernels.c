@@ -30,7 +30,7 @@ cl_struct* init_device(char* kernel_path, char* name)
     if (err != CL_SUCCESS)
     {
         printf("Error: Failed to create a device group!\n");
-        return EXIT_FAILURE;
+        exit(1);
     }
     
     // Create a compute context
@@ -38,7 +38,7 @@ cl_struct* init_device(char* kernel_path, char* name)
     if (!context)
     {
         printf("Error: Failed to create a compute context!\n");
-        return EXIT_FAILURE;
+        exit(1);
     }
     
     // Create a command commands
@@ -46,7 +46,7 @@ cl_struct* init_device(char* kernel_path, char* name)
     if (!commands)
     {
         printf("Error: Failed to create a command commands!\n");
-        return EXIT_FAILURE;
+        exit(1);
     }
     
     // Create the compute program from the source file
@@ -56,14 +56,14 @@ cl_struct* init_device(char* kernel_path, char* name)
     lFileSize = LoadOpenCLKernel(kernel_path, &KernelSource);
     if( lFileSize < 0L ) {
         perror("File read failed");
-        return 1;
+        exit(1);
     }
     
     output.program = clCreateProgramWithSource(output.context, 1, (const char **) & KernelSource, NULL, &err);
     if (!output.program)
     {
         printf("Error: Failed to create compute program!\n");
-        return EXIT_FAILURE;
+        exit(1);
     }
     
     // Build the program executable
