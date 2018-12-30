@@ -55,7 +55,7 @@ void gpu_preprocess(BLOB* img){
     
     /* Initialise OpenCL kernel */
     // Note: this is only possible because the kernel environment is on the heap
-    cl_struct* p_kernel_env = init_device((char *) "preprocessing_kernel.cl", (char *) "preproc");
+    cl_struct* p_kernel_env = init_device((char *) "preprocessing_kernel.cl", (char *) "gpu_device_preprocess");
     
     /* Copy image data from the CPU to the GPUs global memory */
     
