@@ -9,7 +9,7 @@
 #define cl_setup_h
 
 #include <stdio.h>
-#include <OpenCL/cl.h>
+#include <openCL.h>
 
 typedef struct {
     cl_device_id        device_id; // Compute device ID

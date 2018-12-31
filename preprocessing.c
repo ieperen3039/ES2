@@ -1,4 +1,4 @@
-#include <OpenCL/cl.h>
+#include <openCL.h>
 
 #include "preprocessing.h"
 #include "cl_kernels.h"
