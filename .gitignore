@@ -5,10 +5,10 @@
 *.o
 *.d
 *.idea
-CMakeLists.txt
 check*
 mobilenetv2
-cmake-build-debug
 .DS_Store
 *.xcworkspace
 Makefile
+CMakeLists.txt
+cmake-build-debug
