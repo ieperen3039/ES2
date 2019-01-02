@@ -64,18 +64,16 @@ void gpu_preprocess(BLOB* img){
     
     /* Set arguments */
     // Input
-    printf("READY\n");
     cl_mem input_blob = clCreateBuffer(p_kernel_env->context,
                                        CL_MEM_WRITE_ONLY | CL_MEM_COPY_HOST_PTR,
                                        blob_size,
                                        img->data,
                                        &err);
-    printf("...\n");
     if(err != CL_SUCCESS) {
         printf("Error line %d: Failed to generate buffer! %d\n", __LINE__, err);
         exit(1);
     }
-    printf("SUCCESS ONCE!\n");
+
     // Output
     cl_mem output_blob = clCreateBuffer(p_kernel_env->context,
                                         CL_MEM_WRITE_ONLY,

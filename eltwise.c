@@ -24,7 +24,7 @@ BLOB* eltwise(BLOB** in_arr, eltwise_param_t* p) {
 				break;
 
 			case EW_MAX:
-				out->data[i] = fmax(out->data[i], in_arr[j]->data[i]);
+				out->data[i] = fmaxf(out->data[i], in_arr[j]->data[i]);
 				break;
 			}
 

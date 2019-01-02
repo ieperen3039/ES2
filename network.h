@@ -2,7 +2,7 @@
 #define NETWORK_H
 #include "blob.h"
 #include "image_util.h"
-#include "convolution.h"
+#include "convolution_kernel.h"
 #include "eltwise.h"
 #include "pooling.h"
 

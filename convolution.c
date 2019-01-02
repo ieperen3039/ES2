@@ -1,226 +1,392 @@
-#include "convolution.h"
+#include "convolution_kernel.h"
+#include "cl_kernels.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <CL/cl.h>
+#include <cublas_v2.h>
+#include <curand_kernel.h>
+
+#define DO_GPU_CONVOLUTION true
+
+void setKernelArg(unsigned int argID, const cl_struct* p_kernel_env, cl_mem* data);
 
 //add padding to blob
 BLOB* pad(BLOB* in, int pad) {
 
-	//create output blob
-	BLOB* out = blob_calloc(in->d, in->h + 2 * pad, in->w + pad * 2);
+    //create output blob
+    BLOB* out = blob_calloc(in->d, in->h + 2 * pad, in->w + pad * 2);
 
-	//copy non-padded input into output blob
-	for (int z = 0; z < in->d; z++) {
-		for (int y = 0; y < in->h; y++) {
-			for (int x = 0; x < in->w; x++) {
-				blob_data(out,z,y+pad,x+pad)= blob_data(in,z,y,x);
-			}
-		}
-	}
+    //copy non-padded input into output blob
+    for (int z = 0; z < in->d; z++) {
+        for (int y = 0; y < in->h; y++) {
+            for (int x = 0; x < in->w; x++) {
+                blob_data(out, z, y + pad, x + pad) = blob_data(in, z, y, x);
+            }
+        }
+    }
 
-	//return pointer to padded blob
-	return out;
+    //return pointer to padded blob
+    return out;
 }
 
 BLOB* load_weights(BLOB* b, conv_param_t* p) {
 
-	//open weights file for reading
-	FILE* fp = fopen(p->weights, "rb");
-	if (fp == NULL) {
-		printf("ERROR could not open file %s for reading\n", p->weights);
+    //open weights file for reading
+    FILE* fp = fopen(p->weights, "rb");
+    if (fp == NULL) {
+        printf("ERROR could not open file %s for reading\n", p->weights);
         exit(1);
-	}
+    }
 
-	//for fully connected layers the kernel size is equal to the input size
-	int Ky = (p->fc) ? b->h : p->Ky;
-	int Kx = (p->fc) ? b->w : p->Kx;
+    //for fully connected layers the kernel size is equal to the input size
+    int Ky = (p->fc) ? b->h : p->Ky;
+    int Kx = (p->fc) ? b->w : p->Kx;
 
-	//allocate 3D blob, and emulate 4D in KxKy later
-	BLOB* w = blob_alloc(p->num_out, b->d / p->group, Ky * Kx);
+    //allocate 3D blob, and emulate 4D in KxKy later
+    BLOB* w = blob_alloc(p->num_out, b->d / p->group, Ky * Kx);
 
-	//fill 4D weight structure
-	for (int g = 0; g < p->group; g++) {
-		for (int o = g * (p->num_out / p->group);
-				o < (g + 1) * (p->num_out / p->group);
-				o++) {
-			for (int i = g * (b->d / p->group);
-					i < (g + 1) * (b->d / p->group);
-					i++) {
-				/* note: each output map has only  b->d/p->group input maps.
-				 * Hence the absolute index of i is subtracted when storing in w */
-				if ((int) fread(
-						&(blob_data(w, o, i - g * (b->d / p->group), 0)),
-						sizeof(float), Ky * Kx, fp) != Ky * Kx) {
+    //fill 4D weight structure
+    for (int g = 0; g < p->group; g++) {
+        for (int o = g * (p->num_out / p->group);
+             o < (g + 1) * (p->num_out / p->group);
+             o++) {
+            for (int i = g * (b->d / p->group);
+                 i < (g + 1) * (b->d / p->group);
+                 i++) {
+                /* note: each output map has only  b->d/p->group input maps.
+                 * Hence the absolute index of i is subtracted when storing in w */
+                if ((int) fread(
+                        &(blob_data(w, o, i - g * (b->d / p->group), 0)),
+                        sizeof(float), Ky * Kx, fp) != Ky * Kx) {
                     printf("ERROR: loading weights from file %s\n", p->weights);
                     exit(1);
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 
-	//close file
-	fclose(fp);
+    //close file
+    fclose(fp);
 
-	//return weight blob
-	return w;
+    //return weight blob
+    return w;
 }
 
 float* load_1d(const char* fname, size_t num) {
 
-	//open file for reading
-	FILE* fp = fopen(fname, "rb");
-	if (fp == NULL) {
+    //open file for reading
+    FILE* fp = fopen(fname, "rb");
+    if (fp == NULL) {
         printf("ERROR: could not open file %s for reading\n", fname);
         exit(1);
-	}
+    }
 
-	//read in array
-	float* arr = (float*) malloc(sizeof(float) * num);
-	if (fread(arr, sizeof(float), num, fp) != num) {
+    //read in array
+    float* arr = (float*) malloc(sizeof(float) * num);
+    if (fread(arr, sizeof(float), num, fp) != num) {
         printf("ERROR: loading data from file %s\n", fname);
         exit(1);
-	}
+    }
 
-	//close file
-	fclose(fp);
+    //close file
+    fclose(fp);
 
-	return arr;
+    return arr;
+}
+
+void
+gpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSize, const BLOB* out, const BLOB* w) {
+    int err = CL_SUCCESS;
+
+    /* Initialise OpenCL kernel */
+    // Note: this is only possible because the kernel environment is on the heap
+    cl_struct* p_kernel_env = init_device((char*) "convolution_kernel.cl", (char*) "gpu_device_convolution");
+
+    /* Copy image data from the CPU to the GPUs global memory */
+    // Prepare memory
+    size_t blob_size = blob_bytes(in);
+
+    // Set arguments
+    // float* output_blob, float* input_blob, int sx, int sy, int kernelXSize, int kernelYSize, int weightRow, float* weights
+
+    // Input
+    cl_mem input_blob = clCreateBuffer(p_kernel_env->context,
+                                       CL_MEM_WRITE_ONLY | CL_MEM_COPY_HOST_PTR,
+                                       blob_size,
+                                       in->data,
+                                       &err);
+    CHECK_ERR(err);
+
+    // Output
+    cl_mem output_blob = clCreateBuffer(p_kernel_env->context,
+                                        CL_MEM_WRITE_ONLY,
+                                        blob_size,
+                                        out->data,
+                                        &err);
+    CHECK_ERR(err);
+
+    // p_sx
+    int sx_val = p->Sx; // copy
+    cl_mem sx = clCreateBuffer(p_kernel_env->context,
+                               CL_MEM_WRITE_ONLY | CL_MEM_COPY_HOST_PTR,
+                               sizeof(int),
+                               &sx_val,
+                               &err);
+    CHECK_ERR(err);
+
+    // p_sy
+    int sy_val = p->Sy; // copy
+    cl_mem sy = clCreateBuffer(p_kernel_env->context,
+                               CL_MEM_WRITE_ONLY | CL_MEM_COPY_HOST_PTR,
+                               sizeof(int),
+                               &sy_val,
+                               &err);
+    CHECK_ERR(err);
+
+    // kernelXSize
+    cl_mem kx_size = clCreateBuffer(p_kernel_env->context,
+                                    CL_MEM_WRITE_ONLY | CL_MEM_COPY_HOST_PTR,
+                                    sizeof(int),
+                                    &kernelXSize,
+                                    &err);
+    CHECK_ERR(err);
+
+    // kernelYSize
+    cl_mem ky_size = clCreateBuffer(p_kernel_env->context,
+                                    CL_MEM_WRITE_ONLY | CL_MEM_COPY_HOST_PTR,
+                                    sizeof(int),
+                                    &kernelYSize,
+                                    &err);
+    CHECK_ERR(err);
+
+    // weights
+    cl_mem weight_matrix = clCreateBuffer(p_kernel_env->context,
+                                          CL_MEM_WRITE_ONLY | CL_MEM_COPY_HOST_PTR,
+                                          blob_size,
+                                          (void*) w,
+                                          &err);
+    CHECK_ERR(err);
+
+    // Set buffers as kernel arguments
+    setKernelArg(0, p_kernel_env, &output_blob);
+    setKernelArg(1, p_kernel_env, &input_blob);
+    setKernelArg(2, p_kernel_env, &weight_matrix);
+    setKernelArg(3, p_kernel_env, &sx);
+    setKernelArg(4, p_kernel_env, &sy);
+    setKernelArg(5, p_kernel_env, &kx_size);
+    setKernelArg(6, p_kernel_env, &ky_size);
+
+    /* Perform the convolution on the GPU */
+
+    //TODO the values for global_work_size and local_work_size are probably wrong
+    size_t work_dim = 2;
+    size_t global_work_size[work_dim]; // The total number of global work items is the product of all elements
+    global_work_size[0] = 1;
+    global_work_size[1] = 1;
+    size_t local_work_size[work_dim]; // The number of work items in one work group
+    local_work_size[0] = (size_t) p->Kx;
+    local_work_size[1] = (size_t) p->Ky;
+
+    printf("Executing convolution on GPU...\n");
+
+    err = clEnqueueNDRangeKernel(p_kernel_env->commands,    // Command queue
+                                 p_kernel_env->kernel,      // Kernel code
+                                 work_dim,
+                                 NULL,                      // global_work_offset, must be NULL according to documentation
+                                 global_work_size,
+                                 local_work_size,
+                                 0, NULL,
+                                 NULL);            // There are no events we need to wait for, before we can start
+
+    if (err != CL_SUCCESS) {
+        printf("Error: Failed to execute kernel! %d\n", err);
+        exit(1);
+    }
+
+    /* Read output */
+
+    // Load result from __local memory
+    BLOB result_blob;
+    err = clEnqueueReadBuffer(p_kernel_env->commands,   // Command queue
+                              output_blob,              // Pointer to output arg from clCreateBuffer(), TODO
+                              CL_TRUE,                  // Blocking read
+                              0,                        // Read offset
+                              blob_size,                // Number of bytes to read
+                              &result_blob,             // Buffer to read data into
+                              0, NULL, NULL);           // No events
+
+    if (err != CL_SUCCESS) {
+        printf("Error: Failed to read output array! %d\n", err);
+        exit(1);
+    }
+
+    /*
+     TODO:
+     read result back into data
+     */
+
+    /* Release memory */
+    close_device(p_kernel_env);
+
+}
+
+void setKernelArg(unsigned int argID, const cl_struct* p_kernel_env, cl_mem* data) {
+    int err = clSetKernelArg(p_kernel_env->kernel, argID, sizeof(cl_mem), (void*) data); // Output pointer
+
+    if (err != CL_SUCCESS) {
+        printf("Error: Failed to set kernel argument %d: Error %d\n", argID, err);
+        exit(1);
+    }
+}
+
+void cpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSize, const BLOB* out, const BLOB* w) {
+
+    //perform convolution
+    for (int g = 0; g < p->group; g++) {
+        /* G:  Iterate over the number of groups (whatever a group is) */
+        int firstOutputSlice = g * (out->d / p->group);
+        int lastOutputSlice = (g + 1) * (out->d / p->group);
+        for (int o = firstOutputSlice; o < lastOutputSlice; o++) {
+            /* O: Iterate over the output 'slices' (in the depth direction) within group G */
+            int firstInputSlice = g * (in->d / p->group);
+            int lastInputSlice = (g + 1) * (in->d / p->group);
+            for (int i = firstInputSlice; i < lastInputSlice; i++) {
+                /* I: Iterate over the input 'slices' (in the depth direction) within group G */
+
+                for (int m = 0; m < out->h; m++) {
+                    /* M: Iterate over the rows (height) of slice O */
+                    for (int n = 0; n < out->w; n++) {
+                        /* N: Iterate over the cells in row M */
+                        // Calculate dot product by using kernels (for us 1x1 or 3x3)
+                        for (int k = 0; k < kernelYSize; k++) {
+                            for (int l = 0; l < kernelXSize; l++) {
+                                /* note: absolute starting i is subtracted for
+                                 the weights, see load_weights function for more info */
+                                int ypos = m * (p->Sy) + k;
+                                int xpos = n * (p->Sx) + l;
+                                int wx = k * kernelXSize + l;
+                                int wy = i - firstInputSlice;
+                                blob_data(out, o, m, n) += blob_data(in, i, ypos, xpos) *
+                                                           blob_data(w, o, wy, wx);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 //convolution, NOTE: destructive of BLOB* in. duplicate if further required!
 BLOB* convolution(BLOB* input, conv_param_t* p) {
 
-	//use local pointer
-	BLOB* in = input;
+    //use local pointer
+    BLOB* in = input;
 
-	//padding of input if required
-	if (p->pad != 0)
-		in = pad(in, p->pad);
+    //padding of input if required
+    if (p->pad != 0)
+        in = pad(in, p->pad);
 
-	//if fully connected, the kernel size is set to the image size
-	int Ky = (p->fc) ? in->h : p->Ky;
-	int Kx = (p->fc) ? in->w : p->Kx;
+    //if fully connected, the kernel size is set to the image size
+    int kernelYSize = (p->fc) ? in->h : p->Ky;
+    int kernelXSize = (p->fc) ? in->w : p->Kx;
 
-	//create blob to hold output
-	int height = (int) floor(((float) in->h - (float) Ky) / (float) p->Sy) + 1;
-	int width = (int) floor(((float) in->w - (float) Kx) / (float) p->Sx) + 1;
-	BLOB* out;
+    //create blob to hold output
+    int height = (int) floorf(((float) in->h - (float) kernelYSize) / (float) p->Sy) + 1;
+    int width = (int) floorf(((float) in->w - (float) kernelXSize) / (float) p->Sx) + 1;
+    BLOB* out;
 
-	//load bias if required
-	if (p->bias == NULL) {
-		//zero init
-		out = blob_calloc(p->num_out, height, width);
-	} else {
-		//not required to calloc
-		out = blob_alloc(p->num_out, height, width);
+    //load bias if required
+    if (p->bias == NULL) {
+        //zero init
+        out = blob_calloc(p->num_out, height, width);
+    } else {
+        //not required to calloc
+        out = blob_alloc(p->num_out, height, width);
 
-		//load bias values from file
-		float* bias = load_1d(p->bias, p->num_out);
+        //load bias values from file
+        float* bias = load_1d(p->bias, p->num_out);
 
-		//set bias or init with zeroes
-		for (int o = 0; o < out->d; o++) {
-			for (int m = 0; m < out->h; m++) {
-				for (int n = 0; n < out->w; n++) {
-					blob_data(out,o,m,n)=bias[o];
-				}
-			}
-		}
+        //set bias or init with zeroes
+        for (int o = 0; o < out->d; o++) {
+            for (int m = 0; m < out->h; m++) {
+                for (int n = 0; n < out->w; n++) {
+                    blob_data(out, o, m, n) = bias[o];
+                }
+            }
+        }
 
-		//cleanup bias
-		free(bias);
-	}
-
-	//load weights
-	BLOB* w = load_weights(in, p);
-
-	//perform convolution
-	for (int g = 0; g < p->group; g++) {
-        /* G:  Iterate over the number of groups (whatever a group is) */
-		for (int o = g * (out->d / p->group);
-				o < (g + 1) * (out->d / p->group);
-				o++) {
-            /* O: Iterate over the output 'slices' (in the depth direction) within group G */
-			for (int i = g * (in->d / p->group);
-					i < (g + 1) * (in->d / p->group);
-					i++) {
-                /* O: Iterate over the input 'slices' (in the depth direction) within group G */
-				for (int m = 0; m < out->h; m++) {
-                    /* M: Iterate over the rows (height) of slice O */
-					for (int n = 0; n < out->w; n++) {
-                        /* N: Iterate over the cells in row M */
-                        
-                        // Calculate dot product by using kernels (for us 1x1 or 3x3)
-						for (int k = 0; k < Ky; k++) {
-							for (int l = 0; l < Kx; l++) {
-								/* note: absolute starting i is subtracted for
-                                 the weights, see load_weights function for more info */
-								blob_data(out,o,m,n) += blob_data(in, i, m*(p->Sy)+k,            n*(p->Sx)+l) *
-                                                        blob_data(w,  o, i-(g*(in->d/p->group)), k*Kx + l   );
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	//free weights
-	blob_free(w);
-
-	//done with padded blob, free
-    if (p->pad != 0) {
-		blob_free(in);
+        //cleanup bias
+        free(bias);
     }
 
-	//perform batchnorm if needed
-	if (p->bn_mean != NULL) {
+    //load weights
+    BLOB* w = load_weights(in, p);
 
-		//load batchnorm mean and variance
-		float* mean = load_1d(p->bn_mean, out->d);
-		float* var = load_1d(p->bn_var, out->d);
+    if (DO_GPU_CONVOLUTION) {
+        gpu_kernel(in, p, kernelYSize, kernelXSize, out, w);
+    } else {
+        cpu_kernel(in, p, kernelYSize, kernelXSize, out, w);
+    }
 
-		//batchnorm
-		for (int o = 0; o < out->d; o++) {
-			for (int m = 0; m < out->h; m++) {
-				for (int n = 0; n < out->w; n++) {
-					blob_data(out,o,m,n) = (blob_data(out,o,m,n) - mean[o])
-							/ sqrtf(var[o]+p->bn_eps);
-				}
-			}
-		}
+    //free weights
+    blob_free(w);
 
-		//free mean and variance
-		free(mean);
-		free(var);
-	}
+    //done with padded blob, free
+    if (p->pad != 0) {
+        blob_free(in);
+    }
 
-	//perform scale if needed
-	if (p->scale != NULL) {
-		//load scale parameters
-		float* scale = load_1d(p->scale, out->d);
-		float* scale_bias = load_1d(p->scale_bias, out->d);
+    //perform batchnorm if needed
+    if (p->bn_mean != NULL) {
 
-		//scale
-		for (int o = 0; o < out->d; o++) {
-			for (int m = 0; m < out->h; m++) {
-				for (int n = 0; n < out->w; n++) {
-					blob_data(out,o,m,n) = blob_data(out,o,m,n)*scale[o] + scale_bias[o];
-				}
-			}
-		}
+        //load batchnorm mean and variance
+        float* mean = load_1d(p->bn_mean, out->d);
+        float* var = load_1d(p->bn_var, out->d);
 
-		//free parameters
-		free(scale);
-		free(scale_bias);
-	}
+        //batchnorm
+        for (int o = 0; o < out->d; o++) {
+            for (int m = 0; m < out->h; m++) {
+                for (int n = 0; n < out->w; n++) {
+                    blob_data(out, o, m, n) = (blob_data(out, o, m, n) - mean[o])
+                                              / sqrtf(var[o] + p->bn_eps);
+                }
+            }
+        }
 
-	//perform relu
-	if (p->relu == true) {
-		for (int i = 0; i < blob_size(out); i++) {
-			out->data[i] = fmax(0.0f, out->data[i]);
-		}
-	}
+        //free mean and variance
+        free(mean);
+        free(var);
+    }
 
-	//return output
-	return out;
+    //perform scale if needed
+    if (p->scale != NULL) {
+        //load scale parameters
+        float* scale = load_1d(p->scale, out->d);
+        float* scale_bias = load_1d(p->scale_bias, out->d);
+
+        //scale
+        for (int o = 0; o < out->d; o++) {
+            for (int m = 0; m < out->h; m++) {
+                for (int n = 0; n < out->w; n++) {
+                    blob_data(out, o, m, n) = blob_data(out, o, m, n) * scale[o] + scale_bias[o];
+                }
+            }
+        }
+
+        //free parameters
+        free(scale);
+        free(scale_bias);
+    }
+
+    //perform relu
+    if (p->relu == true) {
+        for (int i = 0; i < blob_size(out); i++) {
+            out->data[i] = fmaxf(0.0f, out->data[i]);
+        }
+    }
+
+    //return output
+    return out;
 }

@@ -1,5 +1,8 @@
 #ifndef CONVOLUTION_H
 #define CONVOLUTION_H
+
+#define CHECK_ERR(err) if((err) != CL_SUCCESS) {printf("Error line %d: Failed to generate buffer! %d\n", __LINE__, (err));exit(1);}
+
 #include "blob.h"
 #include <stdbool.h>
 
@@ -44,6 +47,12 @@ typedef struct {
 	bool fc;
 
 } conv_param_t;
+
+void
+cpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSize, const BLOB* out, const BLOB* w);
+
+void
+gpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSize, const BLOB* out, const BLOB* w);
 
 //perform convolution
 BLOB* convolution(BLOB* in, conv_param_t* p);
