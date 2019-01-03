@@ -8,7 +8,7 @@
 #ifdef WIN32
 #include <CL/opencl.h>
 #elif __linux__
-#include <OpenCL/cl.h>
+#include <CL/cl.h>
 #endif
 
 #endif //KITTEN_OPENCL_H
