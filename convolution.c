@@ -1,13 +1,7 @@
 #include "convolution_kernel.h"
 #include "cl_kernels.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <CL/cl.h>
-#include <cublas_v2.h>
-#include <curand_kernel.h>
 
-#define DO_GPU_CONVOLUTION true
+//#define DO_GPU_CONVOLUTION
 
 void setKernelArg(unsigned int argID, const cl_struct* p_kernel_env, cl_mem* data);
 
@@ -48,17 +42,19 @@ BLOB* load_weights(BLOB* b, conv_param_t* p) {
 
     //fill 4D weight structure
     for (int g = 0; g < p->group; g++) {
-        for (int o = g * (p->num_out / p->group);
-             o < (g + 1) * (p->num_out / p->group);
-             o++) {
-            for (int i = g * (b->d / p->group);
-                 i < (g + 1) * (b->d / p->group);
-                 i++) {
+
+        int firstIndex = g * (p->num_out / p->group);
+        int lastIndex = firstIndex + g;
+        for (int o = firstIndex; o < lastIndex; o++) {
+
+            int firstIndex2 = g * (b->d / p->group);
+            int lastIndex2 = firstIndex2 + g;
+            for (int i = firstIndex2; i < lastIndex2; i++) {
                 /* note: each output map has only  b->d/p->group input maps.
                  * Hence the absolute index of i is subtracted when storing in w */
-                if ((int) fread(
-                        &(blob_data(w, o, i - g * (b->d / p->group), 0)),
-                        sizeof(float), Ky * Kx, fp) != Ky * Kx) {
+                float data = blob_data(w, o, i - firstIndex2, 0);
+                size_t fileSize = fread(&data, sizeof(float), Ky * Kx, fp);
+                if ((int) fileSize != Ky * Kx) {
                     printf("ERROR: loading weights from file %s\n", p->weights);
                     exit(1);
                 }
@@ -240,17 +236,18 @@ void setKernelArg(unsigned int argID, const cl_struct* p_kernel_env, cl_mem* dat
     }
 }
 
-void cpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSize, const BLOB* out, const BLOB* w) {
+void
+cpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSize, const BLOB* out, const BLOB* w) {
 
     //perform convolution
     for (int g = 0; g < p->group; g++) {
         /* G:  Iterate over the number of groups (whatever a group is) */
         int firstOutputSlice = g * (out->d / p->group);
-        int lastOutputSlice = (g + 1) * (out->d / p->group);
+        int lastOutputSlice = firstOutputSlice + g;
         for (int o = firstOutputSlice; o < lastOutputSlice; o++) {
             /* O: Iterate over the output 'slices' (in the depth direction) within group G */
             int firstInputSlice = g * (in->d / p->group);
-            int lastInputSlice = (g + 1) * (in->d / p->group);
+            int lastInputSlice = firstInputSlice + g;
             for (int i = firstInputSlice; i < lastInputSlice; i++) {
                 /* I: Iterate over the input 'slices' (in the depth direction) within group G */
 
@@ -324,11 +321,11 @@ BLOB* convolution(BLOB* input, conv_param_t* p) {
     //load weights
     BLOB* w = load_weights(in, p);
 
-    if (DO_GPU_CONVOLUTION) {
-        gpu_kernel(in, p, kernelYSize, kernelXSize, out, w);
-    } else {
-        cpu_kernel(in, p, kernelYSize, kernelXSize, out, w);
-    }
+#ifdef DO_GPU_CONVOLUTION
+    gpu_kernel(in, p, kernelYSize, kernelXSize, out, w);
+#else
+    cpu_kernel(in, p, kernelYSize, kernelXSize, out, w);
+#endif
 
     //free weights
     blob_free(w);

@@ -1,11 +1,6 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "image_util.h"
 #include "network.h"
-#include "mobilenetv2.h"
-#include "preprocessing.h"
-#include "timer.h"
 
 int argmax(BLOB* b) {
 	//find index of channel that is maximum
@@ -38,16 +33,16 @@ int main(int argc, char* argv[]) {
 	//Do preprocessing of the image
 	printf("Preprocessing image\n");
 
-	gpu_preprocess(img);
+	cpu_preprocess(img);
 
 	//perform inference
 	printf("Performing inference\n");
 
 	//warp a timer around the network evaluation
-	TIMEIT_NAMED("Complete Network",
+	GET_NAMED_TIMER("Complete Network",
 			//evaluate the network
 			BLOB* out = network(&mobilenetv2, img);
-			); //end of timer wrapper
+	); //end of timer wrapper
 
 	//get class index of maximum
 	int class_idx = argmax(out);
