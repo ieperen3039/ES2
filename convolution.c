@@ -1,7 +1,13 @@
 #include "convolution_kernel.h"
 #include "cl_kernels.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <CL/cl.h>
+#include <cublas_v2.h>
+#include <curand_kernel.h>
 
-//#define DO_GPU_CONVOLUTION
+#define DO_GPU_CONVOLUTION true
 
 void setKernelArg(unsigned int argID, const cl_struct* p_kernel_env, cl_mem* data);
 
