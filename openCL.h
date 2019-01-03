@@ -7,7 +7,7 @@
 
 #ifdef WIN32
 #include <CL/opencl.h>
-#elif LINUX
+#elif __linux__
 #include <OpenCL/cl.h>
 #endif
 
