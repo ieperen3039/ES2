@@ -17,9 +17,11 @@ cl_struct* init_device(char* kernel_path, char* name) {
 
     cl_uint dev_cnt = 0;
     clGetPlatformIDs(0, NULL, &dev_cnt);
+    printf("Found %d available devices\n", dev_cnt);
 
-    cl_platform_id platform_ids[dev_cnt];
-    clGetPlatformIDs(dev_cnt, platform_ids, NULL);
+    cl_uint nof_platforms = 20;
+    cl_platform_id platform_ids[nof_platforms];
+    clGetPlatformIDs(nof_platforms, platform_ids, &dev_cnt);
     printf("Found %d available devices\n", dev_cnt);
 
     // Connect to a compute device
@@ -39,8 +41,7 @@ cl_struct* init_device(char* kernel_path, char* name) {
     // Create a compute context
     printf("Creating context...\n");
     sleep(1);
-    cl_context_properties[] properties = {CL_CONTEXT_PLATFORM, platform_ids[0], 0};
-    output.context = clCreateContext(properties, tgt_dev_cnt, &output.device_id, NULL, NULL, &err);
+    output.context = clCreateContext(NULL, tgt_dev_cnt, &output.device_id, NULL, NULL, &err);
     if (err != CL_SUCCESS || output.context == NULL) {
         printf("Error: Failed to create a compute context. (%s)\n", error_to_string(err));
         exit(EXIT_FAILURE);
