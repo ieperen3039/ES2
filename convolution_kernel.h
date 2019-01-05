@@ -3,8 +3,13 @@
 
 #define CHECK_ERR(err) if((err) != CL_SUCCESS) {printf("Error line %d: Failed to generate buffer! %d\n", __LINE__, (err));exit(1);}
 
+#ifndef bool
+#define true (!0)
+#define false 0
+#define bool int
+#endif
+
 #include "blob.h"
-#include <stdbool.h>
 
 typedef struct {
 

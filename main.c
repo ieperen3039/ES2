@@ -36,9 +36,10 @@ int main(int argc, char* argv[]) {
 	BLOB* img = read_png(argv[1]);
 
 	//Do preprocessing of the image
-	printf("Preprocessing image\n");
+    printf("Starting preprocessing...\n");
 
 	cpu_preprocess(img);
+    printf("Preprocessing finished\n");
 
 	//perform inference
 	printf("Performing inference\n");
