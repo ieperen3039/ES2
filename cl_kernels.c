@@ -14,45 +14,46 @@ cl_struct* init_device(char* kernel_path, char* name) {
     // Allocate memory on the heap
     cl_struct* p_output = (cl_struct*) malloc(sizeof(cl_struct));
     cl_struct output = *p_output;
+    int error_code;
 
-    cl_uint dev_cnt = 0;
-    clGetPlatformIDs(0, NULL, &dev_cnt);
-    printf("Found %d available devices\n", dev_cnt);
+    cl_uint plaf_cnt = 0;
+    clGetPlatformIDs(0, NULL, &plaf_cnt);
+    printf("Found %d available platforms\n", plaf_cnt);
 
-    cl_uint nof_platforms = 20;
-    cl_platform_id platform_ids[nof_platforms];
-    clGetPlatformIDs(nof_platforms, platform_ids, &dev_cnt);
-    printf("Found %d available devices\n", dev_cnt);
+    cl_uint platform_list_length = plaf_cnt + 5;
+    cl_platform_id platform_ids[platform_list_length];
+    error_code = clGetPlatformIDs(platform_list_length, platform_ids, NULL);
+    if (error_code != CL_SUCCESS) {
+        printf("Error: Failed to get platform id. (%s)\n", error_to_string(error_code));
+        exit(EXIT_FAILURE);
+    }
 
     // Connect to a compute device
     cl_uint tgt_dev_cnt = 1;
     cl_device_type deviceType = CL_DEVICE_TYPE_GPU;
-
+    
     printf("Connecting to %d devices...\n", tgt_dev_cnt);
-    int err = clGetDeviceIDs(platform_ids[0], deviceType, tgt_dev_cnt, &output.device_id, &dev_cnt);
-    if (err != CL_SUCCESS) {
-        printf("Error: Failed to create a device group. (%s)\n", error_to_string(err));
+    error_code = clGetDeviceIDs(platform_ids[0], deviceType, tgt_dev_cnt, &output.device_id, NULL);
+    if (error_code != CL_SUCCESS) {
+        printf("Error: Failed to create a device group. (%s)\n", error_to_string(error_code));
         exit(EXIT_FAILURE);
-
-    } else {
-        printf("Connected to %d devices\n", dev_cnt);
     }
 
     // Create a compute context
     printf("Creating context...\n");
     sleep(1);
-    output.context = clCreateContext(NULL, tgt_dev_cnt, &output.device_id, NULL, NULL, &err);
-    if (err != CL_SUCCESS || output.context == NULL) {
-        printf("Error: Failed to create a compute context. (%s)\n", error_to_string(err));
+    output.context = clCreateContext(NULL, tgt_dev_cnt, &output.device_id, NULL, NULL, &error_code);
+    if (error_code != CL_SUCCESS || output.context == NULL) {
+        printf("Error: Failed to create a compute context. (%s)\n", error_to_string(error_code));
         exit(EXIT_FAILURE);
     }
 
     // Create a command commands
     printf("Creating command queue...\n");
     sleep(1);
-    output.commands = clCreateCommandQueue(output.context, output.device_id, 0, &err);
-    if (err != CL_SUCCESS || output.commands == NULL) {
-        printf("Error: Failed to create a command commands. (%s)\n", error_to_string(err));
+    output.commands = clCreateCommandQueue(output.context, output.device_id, 0, &error_code);
+    if (error_code != CL_SUCCESS || output.commands == NULL) {
+        printf("Error: Failed to create a command commands. (%s)\n", error_to_string(error_code));
         exit(EXIT_FAILURE);
     }
 
@@ -67,19 +68,19 @@ cl_struct* init_device(char* kernel_path, char* name) {
         exit(EXIT_FAILURE);
     }
 
-    output.program = clCreateProgramWithSource(output.context, 1, (const char**) &KernelSource, NULL, &err);
-    if (err != CL_SUCCESS || output.program == NULL) {
-        printf("Error: Failed to create compute program. (%s)\n", error_to_string(err));
+    output.program = clCreateProgramWithSource(output.context, 1, (const char**) &KernelSource, NULL, &error_code);
+    if (error_code != CL_SUCCESS || output.program == NULL) {
+        printf("Error: Failed to create compute program. (%s)\n", error_to_string(error_code));
         exit(EXIT_FAILURE);
     }
 
     printf("Building program...\n");
     // Build the program executable
-    err = clBuildProgram(output.program, 0, NULL, NULL, NULL, NULL);
-    if (err != CL_SUCCESS) {
+    error_code = clBuildProgram(output.program, 0, NULL, NULL, NULL, NULL);
+    if (error_code != CL_SUCCESS) {
         size_t len;
         char buffer[16384];
-        printf("Error: Failed to build program executable. (%s)\n", error_to_string(err));
+        printf("Error: Failed to build program executable. (%s)\n", error_to_string(error_code));
         // Determine which error is returned:
         //printf("%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n", CL_INVALID_PROGRAM, CL_INVALID_VALUE, CL_INVALID_DEVICE, CL_INVALID_BINARY, CL_INVALID_BUILD_OPTIONS, CL_INVALID_OPERATION, CL_COMPILER_NOT_AVAILABLE, CL_DEVICE_COMPILER_AVAILABLE, CL_BUILD_PROGRAM_FAILURE, CL_INVALID_OPERATION, CL_OUT_OF_HOST_MEMORY);
         clGetProgramBuildInfo(output.program, output.device_id, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
@@ -89,9 +90,9 @@ cl_struct* init_device(char* kernel_path, char* name) {
 
     // Create the compute kernel in the program we wish to run
     printf("Creating kernel...\n");
-    output.kernel = clCreateKernel(output.program, name, &err);
-    if (err != CL_SUCCESS || output.kernel == NULL) {
-        printf("Error: Failed to create compute kernel. (%s)\n", error_to_string(err));
+    output.kernel = clCreateKernel(output.program, name, &error_code);
+    if (error_code != CL_SUCCESS || output.kernel == NULL) {
+        printf("Error: Failed to create compute kernel. (%s)\n", error_to_string(error_code));
         exit(EXIT_FAILURE);
     }
 

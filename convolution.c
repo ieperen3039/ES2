@@ -184,11 +184,8 @@ gpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSi
     //TODO the values for global_work_size and local_work_size are probably wrong
     size_t work_dim = 2;
     size_t global_work_size[work_dim]; // The total number of global work items is the product of all elements
-    global_work_size[0] = 1;
-    global_work_size[1] = 1;
-    size_t local_work_size[work_dim]; // The number of work items in one work group
-    local_work_size[0] = (size_t) p->Kx;
-    local_work_size[1] = (size_t) p->Ky;
+    global_work_size[0] = (size_t) p->Kx;
+    global_work_size[1] = (size_t) p->Kx;
 
     printf("Executing convolution on GPU...\n");
 
@@ -197,13 +194,13 @@ gpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSi
                                  work_dim,
                                  NULL,                      // global_work_offset, must be NULL according to documentation
                                  global_work_size,
-                                 local_work_size,
+                                 NULL,
                                  0, NULL,
                                  NULL);            // There are no events we need to wait for, before we can start
 
     if (err != CL_SUCCESS) {
         printf("Error: Failed to execute kernel! %d\n", err);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     /* Read output */

@@ -18,12 +18,11 @@ __kernel gpu_device_convolution(__global float* output_blob, __global float* inp
     // location in the group, input/output position
     unsigned int z = get_global_id(2);
 
-    unsigned int weightBase = weightRow * blob_width;
-
     printf("global location: (%d, %d, %d)\n", x, y, z);
 
     unsigned int blob_width = get_global_size(0); //gridDim.x*blockDim.x;
     unsigned int blob_height = get_global_size(1); //gridDim.y*blockDim.y;
+    unsigned int weightBase = weightRow * blob_width;
 
     unsigned int targetIndex = z * blob_height * blob_width + y * blob_width + x;
     unsigned int accumulator = output_blob[targetIndex];
