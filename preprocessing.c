@@ -1,8 +1,10 @@
 
 
+#include <stdio.h>
 #include "preprocessing.h"
 
 void cpu_preprocess(BLOB* img) {
+    printf("Starting preprocessing...\n");
     //Subtract mean RGB values, scale with 0.017, and swap RGB->BGR
     for (int y = 0; y < img->h; y++) {
         for (int x = 0; x < img->w; x++) {
@@ -14,5 +16,6 @@ void cpu_preprocess(BLOB* img) {
             blob_data(img, 2, y, x) = R;
         }
     }
+    printf("Preprocessing finished\n");
 }
 

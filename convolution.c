@@ -7,7 +7,7 @@
 #include <cublas_v2.h>
 #include <curand_kernel.h>
 
-#define DO_GPU_CONVOLUTION true
+#define DO_GPU_CONVOLUTION
 
 void setKernelArg(unsigned int argID, const cl_struct* p_kernel_env, cl_mem* data);
 
@@ -100,17 +100,15 @@ float* load_1d(const char* fname, size_t num) {
 void
 gpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSize, const BLOB* out, const BLOB* w) {
     int err = CL_SUCCESS;
+    printf("Starting GPU kernel...\n");
 
     /* Initialise OpenCL kernel */
     // Note: this is only possible because the kernel environment is on the heap
     cl_struct* p_kernel_env = init_device((char*) "convolution_kernel.cl", (char*) "gpu_device_convolution");
+    printf("Initializing arguments\n");
 
     /* Copy image data from the CPU to the GPUs global memory */
-    // Prepare memory
     size_t blob_size = blob_bytes(in);
-
-    // Set arguments
-    // float* output_blob, float* input_blob, int sx, int sy, int kernelXSize, int kernelYSize, int weightRow, float* weights
 
     // Input
     cl_mem input_blob = clCreateBuffer(p_kernel_env->context,
@@ -169,6 +167,7 @@ gpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSi
                                           (void*) w,
                                           &err);
     CHECK_ERR(err);
+    printf("Loading arguments...\n");
 
     // Set buffers as kernel arguments
     setKernelArg(0, p_kernel_env, &output_blob);
@@ -207,6 +206,7 @@ gpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSi
     }
 
     /* Read output */
+    printf("Reading output...\n");
 
     // Load result from __local memory
     BLOB result_blob;
@@ -222,6 +222,8 @@ gpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSi
         printf("Error: Failed to read output array! %d\n", err);
         exit(1);
     }
+
+    printf("GPU Kernel finished...\n");
 
     /*
      TODO:
@@ -244,6 +246,8 @@ void setKernelArg(unsigned int argID, const cl_struct* p_kernel_env, cl_mem* dat
 
 void
 cpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSize, const BLOB* out, const BLOB* w) {
+
+    printf("Starting CPU kernel...\n");
 
     //perform convolution
     for (int g = 0; g < p->group; g++) {
@@ -279,6 +283,8 @@ cpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSi
             }
         }
     }
+
+    printf("CPU Kernel finished...\n");
 }
 
 //convolution, NOTE: destructive of BLOB* in. duplicate if further required!
@@ -305,6 +311,8 @@ BLOB* convolution(BLOB* input, conv_param_t* p) {
         //zero init
         out = blob_calloc(p->num_out, height, width);
     } else {
+
+        printf("Loading bias...\n");
         //not required to calloc
         out = blob_alloc(p->num_out, height, width);
 
@@ -323,6 +331,7 @@ BLOB* convolution(BLOB* input, conv_param_t* p) {
         //cleanup bias
         free(bias);
     }
+    printf("Loading weights...\n");
 
     //load weights
     BLOB* w = load_weights(in, p);
