@@ -11,7 +11,7 @@
 #include <CL/cl.h>
 #endif
 
-char* error_to_string(int err_code){
+const char* error_to_string(int err_code){
     switch (err_code){
         case CL_SUCCESS: return "SUCCESS";
         case CL_DEVICE_NOT_FOUND: return "DEVICE_NOT_FOUND";
@@ -72,7 +72,7 @@ char* error_to_string(int err_code){
         case CL_INVALID_COMPILER_OPTIONS: return "INVALID_COMPILER_OPTIONS";
         case CL_INVALID_LINKER_OPTIONS: return "INVALID_LINKER_OPTIONS";
         case CL_INVALID_DEVICE_PARTITION_COUNT: return "INVALID_DEVICE_PARTITION_COUNT";
-        default: return "(unknown error)";
+        default: return "unknown error";
     }
 }
 
