@@ -182,10 +182,11 @@ gpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSi
     /* Perform the convolution on the GPU */
 
     //TODO the values for global_work_size and local_work_size are probably wrong
-    size_t work_dim = 2;
+    size_t work_dim = 3;
     size_t global_work_size[work_dim]; // The total number of global work items is the product of all elements
-    global_work_size[0] = (size_t) p->Kx;
-    global_work_size[1] = (size_t) p->Kx;
+    global_work_size[0] = (size_t) p->Sx;
+    global_work_size[1] = (size_t) p->Sy;
+    global_work_size[2] = (size_t) p->group;
 
     printf("Executing convolution on GPU...\n");
 
