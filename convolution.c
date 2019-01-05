@@ -100,12 +100,13 @@ float* load_1d(const char* fname, size_t num) {
 void
 gpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSize, const BLOB* out, const BLOB* w) {
     int err = CL_SUCCESS;
-    printf("Starting GPU kernel...\n");
+    printf("Starting GPU kernel\n");
 
     /* Initialise OpenCL kernel */
     // Note: this is only possible because the kernel environment is on the heap
+
     cl_struct* p_kernel_env = init_device((char*) "convolution_kernel.cl", (char*) "gpu_device_convolution");
-    printf("Initializing arguments\n");
+    printf("Initializing arguments...\n");
 
     /* Copy image data from the CPU to the GPUs global memory */
     size_t blob_size = blob_bytes(in);
