@@ -20,11 +20,12 @@ __kernel gpu_device_convolution(__global float* output_blob, __global float* inp
 
     printf("global location: (%d, %d, %d)\n", x, y, z);
 
-    unsigned int blob_width = get_global_size(0); //gridDim.x*blockDim.x;
-    unsigned int blob_height = get_global_size(1); //gridDim.y*blockDim.y;
-    unsigned int weightBase = weightRow * blob_width;
+    unsigned int blob_width = get_global_size(0);
+    unsigned int blob_height = get_global_size(1);
+    unsigned int wy = y * blob_height + x; // index of this element in the layer
 
-    unsigned int targetIndex = z * blob_height * blob_width + y * blob_width + x;
+    unsigned int firstEltInLayerInd = z * blob_height * blob_width;
+    unsigned int targetIndex = firstEltInLayerInd + y * blob_width + x;
     unsigned int accumulator = output_blob[targetIndex];
 
     for (int k = 0; k < kernelYSize; k++) {
@@ -33,8 +34,8 @@ __kernel gpu_device_convolution(__global float* output_blob, __global float* inp
             unsigned int lx = x * sx + l;
             unsigned int wx = k * kernelXSize + l;
 
-            unsigned int valueInd = z * blob_height * blob_width + ky * blob_width + lx;
-            unsigned int weightInd = z * blob_height * blob_width + weightBase + wx;
+            unsigned int valueInd = firstEltInLayerInd + ky * blob_width + lx;
+            unsigned int weightInd = firstEltInLayerInd + wy * blob_width + wx;
 
             accumulator += input_blob[valueInd] * weights[weightInd];
         }

@@ -27,8 +27,8 @@ typedef struct {
 	//padding
 	int pad;
 
-	//group
-	int group;
+	//number of groups in the network
+	int nof_groups;
 
 	//weights
 	const char* weights;

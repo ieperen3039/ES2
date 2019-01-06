@@ -24,8 +24,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv1_weights.bin",
@@ -63,8 +63,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv2_1_expand_weights.bin",
@@ -102,8 +102,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 32,
+						//nof_groups
+						.nof_groups = 32,
 
 						//weights
 						.weights = "bins/conv2_1_dwise_weights.bin",
@@ -141,8 +141,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv2_1_linear_weights.bin",
@@ -180,8 +180,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv2_2_expand_weights.bin",
@@ -219,8 +219,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 96,
+						//nof_groups
+						.nof_groups = 96,
 
 						//weights
 						.weights = "bins/conv2_2_dwise_weights.bin",
@@ -258,8 +258,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv2_2_linear_weights.bin",
@@ -297,8 +297,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv3_1_expand_weights.bin",
@@ -336,8 +336,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 144,
+						//nof_groups
+						.nof_groups = 144,
 
 						//weights
 						.weights = "bins/conv3_1_dwise_weights.bin",
@@ -375,8 +375,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv3_1_linear_weights.bin",
@@ -418,8 +418,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv3_2_expand_weights.bin",
@@ -457,8 +457,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 144,
+						//nof_groups
+						.nof_groups = 144,
 
 						//weights
 						.weights = "bins/conv3_2_dwise_weights.bin",
@@ -496,8 +496,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv3_2_linear_weights.bin",
@@ -535,8 +535,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv4_1_expand_weights.bin",
@@ -574,8 +574,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 192,
+						//nof_groups
+						.nof_groups = 192,
 
 						//weights
 						.weights = "bins/conv4_1_dwise_weights.bin",
@@ -613,8 +613,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv4_1_linear_weights.bin",
@@ -656,8 +656,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv4_2_expand_weights.bin",
@@ -695,8 +695,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 192,
+						//nof_groups
+						.nof_groups = 192,
 
 						//weights
 						.weights = "bins/conv4_2_dwise_weights.bin",
@@ -734,8 +734,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv4_2_linear_weights.bin",
@@ -777,8 +777,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv4_3_expand_weights.bin",
@@ -816,8 +816,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 192,
+						//nof_groups
+						.nof_groups = 192,
 
 						//weights
 						.weights = "bins/conv4_3_dwise_weights.bin",
@@ -855,8 +855,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv4_3_linear_weights.bin",
@@ -894,8 +894,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv4_4_expand_weights.bin",
@@ -933,8 +933,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 384,
+						//nof_groups
+						.nof_groups = 384,
 
 						//weights
 						.weights = "bins/conv4_4_dwise_weights.bin",
@@ -972,8 +972,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv4_4_linear_weights.bin",
@@ -1015,8 +1015,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv4_5_expand_weights.bin",
@@ -1054,8 +1054,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 384,
+						//nof_groups
+						.nof_groups = 384,
 
 						//weights
 						.weights = "bins/conv4_5_dwise_weights.bin",
@@ -1093,8 +1093,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv4_5_linear_weights.bin",
@@ -1136,8 +1136,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv4_6_expand_weights.bin",
@@ -1175,8 +1175,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 384,
+						//nof_groups
+						.nof_groups = 384,
 
 						//weights
 						.weights = "bins/conv4_6_dwise_weights.bin",
@@ -1214,8 +1214,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv4_6_linear_weights.bin",
@@ -1257,8 +1257,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv4_7_expand_weights.bin",
@@ -1296,8 +1296,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 384,
+						//nof_groups
+						.nof_groups = 384,
 
 						//weights
 						.weights = "bins/conv4_7_dwise_weights.bin",
@@ -1335,8 +1335,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv4_7_linear_weights.bin",
@@ -1374,8 +1374,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv5_1_expand_weights.bin",
@@ -1413,8 +1413,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 576,
+						//nof_groups
+						.nof_groups = 576,
 
 						//weights
 						.weights = "bins/conv5_1_dwise_weights.bin",
@@ -1452,8 +1452,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv5_1_linear_weights.bin",
@@ -1495,8 +1495,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv5_2_expand_weights.bin",
@@ -1534,8 +1534,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 576,
+						//nof_groups
+						.nof_groups = 576,
 
 						//weights
 						.weights = "bins/conv5_2_dwise_weights.bin",
@@ -1573,8 +1573,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv5_2_linear_weights.bin",
@@ -1616,8 +1616,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv5_3_expand_weights.bin",
@@ -1655,8 +1655,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 576,
+						//nof_groups
+						.nof_groups = 576,
 
 						//weights
 						.weights = "bins/conv5_3_dwise_weights.bin",
@@ -1694,8 +1694,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv5_3_linear_weights.bin",
@@ -1733,8 +1733,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv6_1_expand_weights.bin",
@@ -1772,8 +1772,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 960,
+						//nof_groups
+						.nof_groups = 960,
 
 						//weights
 						.weights = "bins/conv6_1_dwise_weights.bin",
@@ -1811,8 +1811,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv6_1_linear_weights.bin",
@@ -1854,8 +1854,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv6_2_expand_weights.bin",
@@ -1893,8 +1893,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 960,
+						//nof_groups
+						.nof_groups = 960,
 
 						//weights
 						.weights = "bins/conv6_2_dwise_weights.bin",
@@ -1932,8 +1932,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv6_2_linear_weights.bin",
@@ -1975,8 +1975,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv6_3_expand_weights.bin",
@@ -2014,8 +2014,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 1,
 
-						//group
-						.group = 960,
+						//nof_groups
+						.nof_groups = 960,
 
 						//weights
 						.weights = "bins/conv6_3_dwise_weights.bin",
@@ -2053,8 +2053,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv6_3_linear_weights.bin",
@@ -2092,8 +2092,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/conv6_4_weights.bin",
@@ -2136,8 +2136,8 @@ layer_t mobilenetv2_layers[] = {
 						//padding
 						.pad = 0,
 
-						//group
-						.group = 1,
+						//nof_groups
+						.nof_groups = 1,
 
 						//weights
 						.weights = "bins/fc7_weights.bin",

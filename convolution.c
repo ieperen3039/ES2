@@ -44,19 +44,19 @@ BLOB* load_weights(BLOB* b, conv_param_t* p) {
     int Kx = (p->fc) ? b->w : p->Kx;
 
     //allocate 3D blob, and emulate 4D in KxKy later
-    BLOB* w = blob_alloc(p->num_out, b->d / p->group, Ky * Kx);
+    BLOB* w = blob_alloc(p->num_out, b->d / p->nof_groups, Ky * Kx);
 
     //fill 4D weight structure
-    for (int g = 0; g < p->group; g++) {
+    for (int g = 0; g < p->nof_groups; g++) {
 
-        int firstIndex = g * (p->num_out / p->group);
+        int firstIndex = g * (p->num_out / p->nof_groups);
         int lastIndex = firstIndex + g;
         for (int o = firstIndex; o < lastIndex; o++) {
 
-            int firstIndex2 = g * (b->d / p->group);
+            int firstIndex2 = g * (b->d / p->nof_groups);
             int lastIndex2 = firstIndex2 + g;
             for (int i = firstIndex2; i < lastIndex2; i++) {
-                /* note: each output map has only  b->d/p->group input maps.
+                /* note: each output map has only  b->d/p->nof_groups input maps.
                  * Hence the absolute index of i is subtracted when storing in w */
                 float data = blob_data(w, o, i - firstIndex2, 0);
                 size_t fileSize = fread(&data, sizeof(float), Ky * Kx, fp);
@@ -186,7 +186,7 @@ gpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSi
     size_t global_work_size[work_dim]; // The total number of global work items is the product of all elements
     global_work_size[0] = (size_t) p->Sx;
     global_work_size[1] = (size_t) p->Sy;
-    global_work_size[2] = (size_t) p->group;
+    global_work_size[2] = (size_t) p->nof_groups;
 
     printf("Executing convolution on GPU...\n");
 
@@ -246,19 +246,19 @@ void setKernelArg(unsigned int argID, const cl_struct* p_kernel_env, cl_mem* dat
 void
 cpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSize, const BLOB* out, const BLOB* w) {
 
-    printf("Starting CPU kernel...\n");
+    printf("Starting CPU convolution...\n");
 
     //perform convolution
-    for (int g = 0; g < p->group; g++) {
-        /* G:  Iterate over the number of groups (whatever a group is) */
-        int firstOutputSlice = g * (out->d / p->group);
+    for (int g = 0; g < p->nof_groups; g++) {
+        /* G:  Iterate over the number of layers */
+        int firstOutputSlice = g * (out->d / p->nof_groups);
         int lastOutputSlice = firstOutputSlice + g;
         for (int o = firstOutputSlice; o < lastOutputSlice; o++) {
-            /* O: Iterate over the output 'slices' (in the depth direction) within group G */
-            int firstInputSlice = g * (in->d / p->group);
+            /* O: Iterate over the output 'slices' (in the depth direction) within nof_groups G */
+            int firstInputSlice = g * (in->d / p->nof_groups); // also the first element of the input layer
             int lastInputSlice = firstInputSlice + g;
             for (int i = firstInputSlice; i < lastInputSlice; i++) {
-                /* I: Iterate over the input 'slices' (in the depth direction) within group G */
+                /* I: Iterate over the input 'slices' (in the depth direction) within layer G */
 
                 for (int m = 0; m < out->h; m++) {
                     /* M: Iterate over the rows (height) of slice O */
@@ -283,7 +283,7 @@ cpu_kernel(const BLOB* in, const conv_param_t* p, int kernelYSize, int kernelXSi
         }
     }
 
-    printf("CPU Kernel finished...\n");
+    printf("CPU convolution finished...\n");
 }
 
 //convolution, NOTE: destructive of BLOB* in. duplicate if further required!
